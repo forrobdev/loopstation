@@ -1,11 +1,11 @@
 {
   "type": "module",
   "scripts": {
-    "dev": "node server.js"
+    "dev": "node --watch server.js"
   },
   "dependencies": {
     "cors": "^2.8.6",
     "express": "^5.2.1",
-    "music-metadata": "^11.15.0"
+    "ws": "^8.21.3"
   }
 }

@@ -4,7 +4,6 @@ import fs from 'node:fs'
 import {spawn} from "node:child_process"
 import cors from "cors"
 import {styleText} from 'node:util'
-import { parseFile } from 'music-metadata';
 
 const app = express()
 const PORT = 3000
@@ -146,22 +145,3 @@ playTrack(currentTrackIndex) // Start the stream loop immediately
 app.listen(PORT, () => {
     console.log(`Radio running at http://localhost:${PORT}`)
 })
-
-
-
-// La fonction pour lire les infos d'un fichier précis
-async function logAudioMetadata(trackPath) {
-    try {
-        // On utilise directement parseFile ici !
-        const metadata = await parseFile(trackPath);
-        
-        // metadata.common contient les infos principales (titre, artiste, pochette, etc.)
-        console.log("Infos de la musique :", metadata.common);
-        
-    } catch (error) {
-        console.error("Erreur lors de la lecture des métadonnées :", error.message);
-    }
-}
-
-// Exemple d'utilisation :
-await logAudioMetadata('./tracks/music1.mp3')

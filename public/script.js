@@ -14,6 +14,8 @@ async function fetchCurrentTrack() {
 }
 
 
+
+
 setInterval(fetchCurrentTrack, 5000);
 fetchCurrentTrack();
 
