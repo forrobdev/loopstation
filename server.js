@@ -4,6 +4,7 @@ import fs from 'node:fs'
 import {spawn} from "node:child_process"
 import cors from "cors"
 import {styleText} from 'node:util'
+import { parseFile } from 'music-metadata';
 
 const app = express()
 const PORT = 3000
@@ -76,13 +77,20 @@ const playTrack = (index) => {
 // 3. Fonctions utilitaires
 // Récupérer les infos des tracks
 function getTrackInfoFromJSON(trackPath) {
-    const fileName = path.basename(trackPath) // ex: "music0.mp3"
+    const fileName = path.basename(trackPath)
 
-    const match = fileName.match(/\d+/)
     
-    const trackIdToFind = match ? parseInt(match[0], 10) : null
+    const noExtension = fileName.replace('.mp3', '')
 
-    const track = tracksInfos.find(t => t.track_id === trackIdToFind)
+
+    const trackIdText = noExtension.replace('music', '')
+
+
+    const trackId = parseInt(trackIdText, 10) 
+
+    const track = tracksInfos.find((t) => {
+        return t.track_id === trackId
+    })
 
     return track || { 
         name: "Titre inconnu", 
@@ -138,3 +146,22 @@ playTrack(currentTrackIndex) // Start the stream loop immediately
 app.listen(PORT, () => {
     console.log(`Radio running at http://localhost:${PORT}`)
 })
+
+
+
+// La fonction pour lire les infos d'un fichier précis
+async function logAudioMetadata(trackPath) {
+    try {
+        // On utilise directement parseFile ici !
+        const metadata = await parseFile(trackPath);
+        
+        // metadata.common contient les infos principales (titre, artiste, pochette, etc.)
+        console.log("Infos de la musique :", metadata.common);
+        
+    } catch (error) {
+        console.error("Erreur lors de la lecture des métadonnées :", error.message);
+    }
+}
+
+// Exemple d'utilisation :
+await logAudioMetadata('./tracks/music1.mp3')
