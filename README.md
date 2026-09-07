@@ -1,6 +1,6 @@
-# poc-webradio
+# Loop Station
 
-> A POC for live audio streaming with NodeJs.
+> Bienvenue sur Loop Station, la station qui tourne en boucle !
 
 ## Installation
 

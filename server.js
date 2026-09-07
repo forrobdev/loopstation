@@ -12,9 +12,21 @@ let playlist = []
 let currentTrackIndex = 0
 let ffmpegProcess = null
 const clients = new Set()
+let tracksInfos = []
 
 // 1. Load audio files into memory
 const loadPlaylist = async () => {
+
+    // Récupérer les infos des sons au démarrage
+    try {
+        const jsonPath = path.join(import.meta.dirname, 'tracks', 'tracks-infos.json')
+        const rawData = await fs.promises.readFile(jsonPath, 'utf-8')
+        tracksInfos = JSON.parse(rawData)
+    } catch (error) {
+        console.log(styleText(['bold', 'yellow'], 'Impossible de charger tracks-infos.json', error.message))
+    }
+    //---
+
     const tracks = await fs.promises.glob("tracks/**.mp3")
 
     for await (const track of tracks) {
@@ -39,7 +51,7 @@ const playTrack = (index) => {
         '-i', trackPath,
         '-f', 'mp3',          // Output format: MP3
         '-c:a', 'libmp3lame', // Encode to MP3
-        '-b:a', '128k',       // Constant bitrate (important for seamless stitching)
+        '-b:a', '128k',       // Constant bitrate
         '-ar', '44100',       // 44.1kHz sample rate
         '-ac', '2',           // Stereo
         'pipe:1'              // Output to stdout
@@ -61,7 +73,40 @@ const playTrack = (index) => {
     });
 }
 
-// 3. HTTP Stream Endpoint for browsers
+// 3. Fonctions utilitaires
+// Récupérer les infos des tracks
+function getTrackInfoFromJSON(trackPath) {
+    const fileName = path.basename(trackPath) // ex: "music0.mp3"
+
+    const match = fileName.match(/\d+/)
+    
+    const trackIdToFind = match ? parseInt(match[0], 10) : null
+
+    const track = tracksInfos.find(t => t.track_id === trackIdToFind)
+
+    return track || { 
+        name: "Titre inconnu", 
+        author: "Artiste inconnu", 
+        cover: "",
+        filename: fileName 
+    }
+}
+
+// 4. Déclaration de toutes les routes API
+// Envoyer les infos de la musique en cours
+app.get('/current-track', (req, res) => {
+    // Évite une erreur si la playlist n'est pas encore chargée
+    if (playlist.length === 0) {
+        return res.json({ name: "Chargement...", author: "", cover: "" })
+    }
+
+    const trackPath = playlist[currentTrackIndex]
+    const trackInfo = getTrackInfoFromJSON(trackPath) 
+    
+    res.json(trackInfo)
+})
+
+// HTTP Stream Endpoint for browsers
 app.get('/stream', (req, res) => {
     res.writeHead(200, {
         'Content-Type': 'audio/mpeg',
@@ -81,11 +126,12 @@ app.get('/stream', (req, res) => {
     });
 });
 
+// 5. Middlewares
 app.use(cors())
 // Serve the static frontend
 app.use(express.static(path.join(import.meta.dirname, 'public')))
 
-// Start Server
+// 6. Lancement du serveur (toujours à la fin)
 await loadPlaylist()
 playTrack(currentTrackIndex) // Start the stream loop immediately
 
