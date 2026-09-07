@@ -60,7 +60,7 @@ likeBtn.addEventListener('click', () => {
         likeBtn.textContent = '🤍 Like';
     } else {
         likes.push({ name: songName, artist: artist, cover: cover });
-        likeBtn.textContent = '❤️ Liké';
+        likeBtn.textContent = '❤️ Like';
     }
 
     saveLikes(likes);
