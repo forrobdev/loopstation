@@ -35,14 +35,34 @@ function saveLikes(likes) {
     localStorage.setItem('likedSongs', JSON.stringify(likes));
 }
 
+function isLiked(songName) {
+    const likes = getLikes();
+
+    for (let i = 0; i < likes.length; i++) {
+        if (likes[i].name === songName) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 likeBtn.addEventListener('click', () => {
     const songName = document.getElementById('name').textContent;
     const artist = document.getElementById('author').textContent;
     const cover = document.getElementById('cover').src;
 
     let likes = getLikes();
-    likes.push({ name: songName, artist: artist, cover: cover });
-    saveLikes(likes);
+    if (isLiked(songName)) {
+        likes = likes.filter(function(song) {
+            return song.name !== songName;
+        });
+        likeBtn.textContent = '🤍 Like';
+    } else {
+        likes.push({ name: songName, artist: artist, cover: cover });
+        likeBtn.textContent = '❤️ Liké';
+    }
 
-    console.log('Liké !', likes);
+    saveLikes(likes);
+    console.log('Likes actuels :', likes);
 });
