@@ -23,8 +23,8 @@ const likeBtn = document.getElementById('likeBtn')
 // Récupère la liste des likes déjà sauvegardés (ou tableau vide si rien)
 function getLikes() {
     const datalike = localStorage.getItem('likedSongs');
-    if (data) {
-        return JSON.parse(data);
+    if (datalike) {
+        return JSON.parse(datalike);
     } else {
         return [];
     }
@@ -34,3 +34,15 @@ function getLikes() {
 function saveLikes(likes) {
     localStorage.setItem('likedSongs', JSON.stringify(likes));
 }
+
+likeBtn.addEventListener('click', () => {
+    const songName = document.getElementById('name').textContent;
+    const artist = document.getElementById('author').textContent;
+    const cover = document.getElementById('cover').src;
+
+    let likes = getLikes();
+    likes.push({ name: songName, artist: artist, cover: cover });
+    saveLikes(likes);
+
+    console.log('Liké !', likes);
+});
