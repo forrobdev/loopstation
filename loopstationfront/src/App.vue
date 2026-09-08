@@ -2,6 +2,7 @@
 
 import MusicPlaying from './components/MusicPlaying.vue';
 import Background from './components/Background.vue';
+import Chat from './components/Chat.vue';
 
 </script>
 
@@ -11,6 +12,8 @@ import Background from './components/Background.vue';
 
   <MusicPlaying></MusicPlaying>
 
+  <Chat></Chat>
+  
 </template>
 
 <style scoped>
