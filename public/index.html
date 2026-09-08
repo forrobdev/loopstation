@@ -22,17 +22,11 @@
             <img id="cover" src="" alt="Pochette de l'album">
             <p id="name">Nom de la musique</p>
             <p id="author">Artiste</p>
-            
-
-            <!-- <button id="likeBtn" style="margin-top: 10px; cursor: pointer; padding: 5px 10px;">🤍 Like</button> -->
         </div>
     </div>
 
     <div style="text-align: center; margin-top: 30px;">
-        
         <audio id="radio-audio" controls crossorigin="anonymous"></audio>
-        
-        <!-- <button id="start-btn" style="padding: 10px 20px; font-size: 18px; cursor: pointer;">Lancer Loop Station</button> -->
     </div>
 
     <div style="text-align: center; margin-top: 20px;">
@@ -60,24 +54,19 @@
         
         <p>0</p>
     </div>
-    
-
-    <script src="https://unpkg.com/butterchurn"></script>
-    <script src="https://unpkg.com/butterchurn-presets"></script>
-    
-
-    <div style="text-align: center;">
-        <h2>Check mon transistor</h2>
-        <audio controls autoplay src="/stream"></audio>
-    </div>
 
     <input type="text" id="pseudoInput" placeholder="Votre pseudo">
     <button id="validerPseudo">Valider</button>
 
-    <div id="chat"></div>
-        <input type="text" id="messageInput" placeholder="Votre message">
+    <div id="chatBox">
+        <div id="messages"></div>
+    </div>
+    <input type="text" id="messageInput" placeholder="Votre message">
+        
     <button id="sendBtn">Envoyer</button>
     
+<script src="https://unpkg.com/butterchurn"></script>
+<script src="https://unpkg.com/butterchurn-presets"></script>
 <script src="script.js"></script>
 </body>
 </html>

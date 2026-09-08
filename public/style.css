@@ -151,29 +151,35 @@ audio {
     z-index: 1;
 }
 
-#chat {
+#chatBox {
+    filter: drop-shadow(0px 0px 20px white);
     position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 250px;
-    height: 300px;
+    bottom: 110px;
+    right: 50px;
+    width: 280px;
+    height: 350px;
     overflow-y: auto;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 10px;
+    background-color: #ffffff;
+    border-radius: 18px;
+    padding: 15px 20px;
 }
 
-#chat p {
+#chatBox p {
     margin: 5px 0;
-    font-size: 14px;
+    font-size: 18px;
 }
 
 #messageInput {
+    width : 280px;
+    border: solid #CACACA 1px;
+    border-radius: 18px;
+    padding: 10px 10px;
+    background-color: #ffffff;
+    color : black;
+
     position: fixed;
-    top: 330px;
-    right: 20px;
-    width: 190px;
+    bottom: 50px;
+    right: 50px;
 }
 
 #sendBtn {

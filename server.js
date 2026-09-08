@@ -201,13 +201,16 @@ wss.on('connection', (ws) => {
 await loadPlaylist()
 playTrack(currentTrackIndex)
 
-const ws_PORT = 7500;
-const wss = new WebSocketServer({ port: ws_PORT });
-const historique = [];
-console.log(`Le serveur WebSocket est en cours d'exécution sur ws://localhost:${ws_PORT}`);
 
-wss.on('connection', (ws) => {
-    console.log('Nouveau client connecté');
+const ws_PORT = 7500;
+
+const chatWss = new WebSocketServer({ port: ws_PORT });
+const historique = [];
+console.log(`Le serveur WebSocket (Chat) est en cours d'exécution sur ws://localhost:${ws_PORT}`);
+
+// 2. On utilise chatWss pour écouter les connexions
+chatWss.on('connection', (ws) => {
+    console.log('Nouveau client connecté au chat');
 
     // Envoyer l'historique au nouveau client
     historique.forEach((msg) => {
@@ -221,8 +224,8 @@ wss.on('connection', (ws) => {
         // Sauvegarder le message dans l'historique
         historique.push(texte);
 
-        // Diffuser le message à tous les clients
-        wss.clients.forEach((client) => {
+        // 3. On utilise bien chatWss.clients ici aussi
+        chatWss.clients.forEach((client) => {
             if (client.readyState === WebSocket.OPEN) {
                 client.send(texte);
             }
@@ -230,6 +233,6 @@ wss.on('connection', (ws) => {
     });
 
     ws.on('close', () => {
-        console.log('Client déconnecté');
+        console.log('Client déconnecté du chat');
     });
 });

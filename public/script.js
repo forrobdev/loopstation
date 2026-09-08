@@ -2,6 +2,38 @@ const buttonSound = new Audio("/assets/button.mp3")
 
 const ws = new WebSocket(`ws://${window.location.host}`);
 
+function animNextMusic(name, author, cover) {
+
+    document.querySelector("#musicPlaying").style.transition = "none"
+    
+    let tl = gsap.timeline({
+        overwrite: true
+    });
+
+    tl.to("#musicPlaying", {
+        rotationY: "+=90",
+        duration: 0.3,
+        ease: "power2.in",
+        onComplete: () => {
+            document.querySelector("#cover").src = cover;
+            document.querySelector("#author").innerHTML = author;
+            document.querySelector("#name").innerHTML = name;
+            
+        }
+    })
+
+    .to("#musicPlaying", {
+        rotationY: "+=270",
+        duration: 1.7,
+        ease: "power4.out",
+        onComplete: () => {
+            console.log('finish');
+        }
+    });
+
+    document.querySelector("#musicPlaying").style.transition = " transform 0.1s ease;"
+}
+
 // 2. Quand la connexion est réussie
 ws.onopen = () => {
     console.log("🟢 Connecté à la radio en temps réel !");
@@ -99,21 +131,20 @@ function isLiked(songName) {
 
 
 
-const startBtn = document.getElementById('pause');
 const audio = document.getElementById('radio-audio');
 const canvas = document.getElementById('visualizer-canvas');
 const pause = document.querySelector("#pause");
 const like = document.querySelector("#like");
 
-like.addEventListener("click", () => {
-    buttonSound.play()
-    const stateImg = like.querySelector("img").getAttribute("src")
+// like.addEventListener("click", () => {
+//     buttonSound.play()
+//     const stateImg = like.querySelector("img").getAttribute("src")
     
-    if (stateImg == "assets/like.png") {
-        like.querySelector("img").setAttribute("src","assets/liked.png")
-    } else {
-        like.querySelector("img").setAttribute("src","assets/like.png")
-    }
+//     if (stateImg == "assets/like.png") {
+//         like.querySelector("img").setAttribute("src","assets/liked.png")
+//     } else {
+//         like.querySelector("img").setAttribute("src","assets/like.png")
+//     }
 
 // likeBtn.addEventListener('click', () => {
 //     const songName = document.getElementById('name').textContent;
@@ -154,12 +185,9 @@ function playMusic() {
     }
 }
 
-// --- EVENEMENTS DES BOUTONS ---
-startBtn.addEventListener('click', () => {
-    playMusic();
-});
 
 pause.addEventListener("click", () => {
+    console.log("Salut t'as cliqué")
     buttonSound.play()
     const stateImg = pause.querySelector("img").getAttribute("src")
     
@@ -168,7 +196,7 @@ pause.addEventListener("click", () => {
         audio.pause();
     } else {
         pause.querySelector("img").setAttribute("src","assets/pause.png")
-        // On utilise la fonction ici pour se reconnecter proprement au flux !
+        
         playMusic(); 
     }
 })
@@ -219,64 +247,23 @@ function initVisualizer() {
 }
 
 
-function animNextMusic(name, author, cover) {
 
-    document.querySelector("#musicPlaying").style.transition = "none"
-    
-    // gsap.to("#musicPlaying", {
-    //     rotateY: "+=360",
-    //     duration: 2,
-    //     ease: "power4.out",
-    //     overwrite: true,
-    //     onComplete: () => {
-    //         console.log('finish');
-    //     }
-    // })
-
-    let tl = gsap.timeline({
-        overwrite: true
-    });
-
-    tl.to("#musicPlaying", {
-        rotationY: "+=90",
-        duration: 0.3,
-        ease: "power2.in",
-        onComplete: () => {
-            document.querySelector("#cover").src = cover;
-            document.querySelector("#author").innerHTML = author;
-            document.querySelector("#name").innerHTML = name;
-            
-        }
-    })
-
-    .to("#musicPlaying", {
-        rotationY: "+=270",
-        duration: 1.7,
-        ease: "power4.out",
-        onComplete: () => {
-            console.log('finish');
-        }
-    });
-
-    document.querySelector("#musicPlaying").style.transition = " transform 0.1s ease;"
-}
 
 
 
 //Animer le bouton radio "bounce"
 const bounce = gsap.timeline({ defaults: { duration: 0.8 }, repeat: -1, repeatDelay: 0.8 });
-bounce.to(".greenBack", {
-    ease: "power4.out",
-    scale: 2,
-})
-  .to(".greenBack", {
-    ease: "power4.in",
-    scale: 1,
-})
-});
+    bounce.to(".greenBack", {
+        ease: "power4.out",
+        scale: 2,
+    })
+    .to(".greenBack", {
+        ease: "power4.in",
+        scale: 1,
+    })
 
 const socket = new WebSocket('ws://localhost:7500');
-const chatDiv = document.getElementById('chat');
+const chatDiv = document.querySelector("#messages");
 
 socket.addEventListener('open', () => {
     console.log('Connecté au serveur WebSocket');
