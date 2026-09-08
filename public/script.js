@@ -117,9 +117,26 @@ socket.addEventListener('open', () => {
 });
 
 socket.addEventListener('message', (event) => {
+    const morceaux = event.data.split(':');
+    const pseudoRecuperer = morceaux[0];
+    const messageRecuperer = morceaux[1];
+    
     const p = document.createElement('p');
-    p.textContent = event.data;
+    p.innerHTML = '<span style="color: #FFBF00;">' + pseudoRecuperer + ':</span> ' + messageRecuperer;
     chatDiv.appendChild(p);
+});
+
+
+const pseudoInput = document.getElementById('pseudoInput');
+const validerPseudo = document.getElementById('validerPseudo')
+
+let pseudo = 'Anonyme';
+
+validerPseudo.addEventListener('click', () => {
+    if (pseudoInput.value.trim() !== ''){
+        pseudo = pseudoInput.value 
+        console.log('Pseudo choisi:', pseudo);
+    }
 });
 
 const sendBtn = document.getElementById('sendBtn');
@@ -129,7 +146,8 @@ sendBtn.addEventListener('click', () => {
     const texte = messageInput.value;
 
     if (texte !== '') {
-        socket.send(texte);
+        socket.send(pseudo + ' : '+ texte);
         messageInput.value = '';
     }
 });
+

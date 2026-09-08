@@ -84,3 +84,17 @@ body {
     right: 20px;
     margin-left: 200px;
 }
+
+#pseudoInput {
+    position: fixed;
+    top: 360px;
+    right: 20px;
+    width: 190px;
+}
+
+#validerPseudo {
+    position: fixed;
+    top: 360px;
+    right: 20px;
+    margin-left: 200px;
+}
