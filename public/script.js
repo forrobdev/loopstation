@@ -115,22 +115,23 @@ like.addEventListener("click", () => {
         like.querySelector("img").setAttribute("src","assets/like.png")
     }
 
-    const songName = document.getElementById('name').textContent;
-    const artist = document.getElementById('author').textContent;
-    const cover = document.getElementById('cover').src;
+// likeBtn.addEventListener('click', () => {
+//     const songName = document.getElementById('name').textContent;
+//     const artist = document.getElementById('author').textContent;
+//     const cover = document.getElementById('cover').src;
 
-    let likes = getLikes();
-    if (isLiked(songName)) {
-        likes = likes.filter(function(song) {
-            return song.name !== songName;
-        });
-    } else {
-        likes.push({ name: songName, artist: artist, cover: cover });
-    }
+//     let likes = getLikes();
+//     if (isLiked(songName)) {
+//         likes = likes.filter(function(song) {
+//             return song.name !== songName;
+//         });
+//     } else {
+//         likes.push({ name: songName, artist: artist, cover: cover });
+//     }
 
-    saveLikes(likes);
-    console.log('Likes actuels :', likes);
-})
+//     saveLikes(likes);
+//     console.log('Likes actuels :', likes);
+// })
 
 let visualizerInit = false;
 
@@ -272,3 +273,47 @@ bounce.to(".greenBack", {
     ease: "power4.in",
     scale: 1,
 })
+});
+
+const socket = new WebSocket('ws://localhost:7500');
+const chatDiv = document.getElementById('chat');
+
+socket.addEventListener('open', () => {
+    console.log('Connecté au serveur WebSocket');
+});
+
+socket.addEventListener('message', (event) => {
+    const morceaux = event.data.split(':');
+    const pseudoRecuperer = morceaux[0];
+    const messageRecuperer = morceaux[1];
+    
+    const p = document.createElement('p');
+    p.innerHTML = '<span style="color: #FFBF00;">' + pseudoRecuperer + ':</span> ' + messageRecuperer;
+    chatDiv.appendChild(p);
+});
+
+
+const pseudoInput = document.getElementById('pseudoInput');
+const validerPseudo = document.getElementById('validerPseudo')
+
+let pseudo = 'Anonyme';
+
+validerPseudo.addEventListener('click', () => {
+    if (pseudoInput.value.trim() !== ''){
+        pseudo = pseudoInput.value 
+        console.log('Pseudo choisi:', pseudo);
+    }
+});
+
+const sendBtn = document.getElementById('sendBtn');
+const messageInput = document.getElementById('messageInput');
+
+sendBtn.addEventListener('click', () => {
+    const texte = messageInput.value;
+
+    if (texte !== '') {
+        socket.send(pseudo + ' : '+ texte);
+        messageInput.value = '';
+    }
+});
+

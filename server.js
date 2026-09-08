@@ -4,7 +4,7 @@ import fs from 'node:fs'
 import {spawn} from "node:child_process"
 import cors from "cors"
 import {styleText} from 'node:util'
-import { WebSocketServer } from 'ws';
+import { WebSocketServer, WebSocket } from 'ws';
 
 const app = express()
 const PORT = 3000
@@ -200,3 +200,36 @@ wss.on('connection', (ws) => {
 // On charge la playlist puis on lance le son
 await loadPlaylist()
 playTrack(currentTrackIndex)
+
+const ws_PORT = 7500;
+const wss = new WebSocketServer({ port: ws_PORT });
+const historique = [];
+console.log(`Le serveur WebSocket est en cours d'exécution sur ws://localhost:${ws_PORT}`);
+
+wss.on('connection', (ws) => {
+    console.log('Nouveau client connecté');
+
+    // Envoyer l'historique au nouveau client
+    historique.forEach((msg) => {
+        ws.send(msg);
+    });
+
+    ws.on('message', (message) => {
+        const texte = message.toString();
+        console.log(`message reçu: ${texte}`);
+
+        // Sauvegarder le message dans l'historique
+        historique.push(texte);
+
+        // Diffuser le message à tous les clients
+        wss.clients.forEach((client) => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(texte);
+            }
+        });
+    });
+
+    ws.on('close', () => {
+        console.log('Client déconnecté');
+    });
+});

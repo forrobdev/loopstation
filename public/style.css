@@ -150,3 +150,49 @@ audio {
     position: absolute;
     z-index: 1;
 }
+
+#chat {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 250px;
+    height: 300px;
+    overflow-y: auto;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+#chat p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+#messageInput {
+    position: fixed;
+    top: 330px;
+    right: 20px;
+    width: 190px;
+}
+
+#sendBtn {
+    position: fixed;
+    top: 330px;
+    right: 20px;
+    margin-left: 200px;
+}
+
+#pseudoInput {
+    position: fixed;
+    top: 360px;
+    right: 20px;
+    width: 190px;
+}
+
+#validerPseudo {
+    position: fixed;
+    top: 360px;
+    right: 20px;
+    margin-left: 200px;
+}
