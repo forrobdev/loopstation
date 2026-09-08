@@ -89,7 +89,7 @@ function isLiked(songName) {
     return false;
 }
 
-likeBtn.addEventListener('click', () => {
+/*likeBtn.addEventListener('click', () => {
     const songName = document.getElementById('name').textContent;
     const artist = document.getElementById('author').textContent;
     const cover = document.getElementById('cover').src;
@@ -107,4 +107,29 @@ likeBtn.addEventListener('click', () => {
 
     saveLikes(likes);
     console.log('Likes actuels :', likes);
+});*/
+
+const socket = new WebSocket('ws://localhost:7500');
+const chatDiv = document.getElementById('chat');
+
+socket.addEventListener('open', () => {
+    console.log('Connecté au serveur WebSocket');
+});
+
+socket.addEventListener('message', (event) => {
+    const p = document.createElement('p');
+    p.textContent = event.data;
+    chatDiv.appendChild(p);
+});
+
+const sendBtn = document.getElementById('sendBtn');
+const messageInput = document.getElementById('messageInput');
+
+sendBtn.addEventListener('click', () => {
+    const texte = messageInput.value;
+
+    if (texte !== '') {
+        socket.send(texte);
+        messageInput.value = '';
+    }
 });
