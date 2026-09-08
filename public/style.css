@@ -17,15 +17,59 @@ body {
     justify-content: center;
     align-items: center;
     overflow : hidden;
+    text-align: center;
 
-    transition: transform 0.1s ease;
+    transition: transform 0.2s ease;
     transform-style: preserve-3d;
 
     filter: drop-shadow(0px 0px 20px white);
 
     position: absolute;
     top : 20px;
-    left: 20px;
+    left: 50px;
+}
+
+.action {
+    background-color: #fff;
+    border-radius: 100px;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow : hidden;
+    width: 80px;
+    height: 80px;
+
+
+    filter: drop-shadow(0px 0px 20px white);
+
+    
+
+    cursor : pointer;
+    transition : 0.3s ease-in-out;
+}
+
+.action:hover {
+    scale: 1.05;
+}
+
+.action img {
+    height : auto;
+    width : 30px;
+}
+
+#actionButtons {
+    display : flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+
+    position: absolute;
+    bottom : 40px;
+
+    z-index: 2;
+    width: 100%;
+    height: fit-content;
 }
 
 #nowPlaying {
@@ -51,4 +95,58 @@ body {
 
 #author {
     margin-top : -10px;
+}
+
+canvas {
+    height: 100%;
+    width: 100%;
+    position : absolute;
+    z-index: -1;
+    top: 0px;
+}
+
+audio {
+    display: none;
+}
+
+
+.online {
+    filter: drop-shadow(0px 0px 20px white);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 10000px;
+    height: 50px;
+    width: fit-content;
+    padding: 0 20px;
+    gap: 20px;
+    
+    z-index: 10;
+
+    position: fixed;
+    top : 40px;
+    right: 50px;
+}
+
+.online p {
+    font-weight: 600;
+    font-size: 22px;
+}
+
+.green {
+    background-color: #60E335;
+    height: 15px;
+    width: 15px;
+    border-radius: 100px;
+    z-index: 2;
+}
+
+.greenBack {
+    background-color: rgba(96, 227, 53, 0.54);
+    height: 15px;
+    width: 15px;
+    border-radius: 100px;
+    position: absolute;
+    z-index: 1;
 }

@@ -4,6 +4,7 @@ import fs from 'node:fs'
 import {spawn} from "node:child_process"
 import cors from "cors"
 import {styleText} from 'node:util'
+import { WebSocketServer } from 'ws';
 
 const app = express()
 const PORT = 3000
@@ -13,10 +14,28 @@ let currentTrackIndex = 0
 let ffmpegProcess = null
 const clients = new Set()
 let tracksInfos = []
+let wss = null; // On prépare la variable pour les WebSockets
+
+//Envoyer les auditeèurs en live
+
+function broadcastListenerCount() {
+    if (!wss) return;
+    
+
+    const message = JSON.stringify({ 
+        type: 'listeners', 
+        count: clients.size 
+    });
+    
+    wss.clients.forEach((client) => {
+        if (client.readyState === 1) { 
+            client.send(message);
+        }
+    });
+}
 
 // 1. Load audio files into memory
 const loadPlaylist = async () => {
-
     // Récupérer les infos des sons au démarrage
     try {
         const jsonPath = path.join(import.meta.dirname, 'tracks', 'tracks-infos.json')
@@ -45,10 +64,28 @@ const playTrack = (index) => {
     const trackPath = playlist[index]
     console.log(`▶ Okok, now playing: ${path.basename(trackPath)}`)
 
+    // --- WEBSOCKET : On prévient tout le monde que la musique change ---
+    if (wss) {
+        const trackInfo = getTrackInfoFromJSON(trackPath)
+        const message = JSON.stringify({
+            type: 'track',
+            data: trackInfo
+        })
+        
+        wss.clients.forEach((client) => {
+            // readyState === 1 signifie que la connexion est bien ouverte
+            if (client.readyState === 1) { 
+                client.send(message)
+            }
+        })
+    }
+    // ------------------------------------------------------------------
+
     // Spawn FFmpeg to convert this single file to a standard MP3 stream
     ffmpegProcess = spawn('ffmpeg', [
         '-re',                // Read at native speed (real-time)
         '-i', trackPath,
+        '-vn',                // Ignore la vidéo/image de couverture
         '-f', 'mp3',          // Output format: MP3
         '-c:a', 'libmp3lame', // Encode to MP3
         '-b:a', '128k',       // Constant bitrate
@@ -77,14 +114,8 @@ const playTrack = (index) => {
 // Récupérer les infos des tracks
 function getTrackInfoFromJSON(trackPath) {
     const fileName = path.basename(trackPath)
-
-    
     const noExtension = fileName.replace('.mp3', '')
-
-
     const trackIdText = noExtension.replace('music', '')
-
-
     const trackId = parseInt(trackIdText, 10) 
 
     const track = tracksInfos.find((t) => {
@@ -100,9 +131,7 @@ function getTrackInfoFromJSON(trackPath) {
 }
 
 // 4. Déclaration de toutes les routes API
-// Envoyer les infos de la musique en cours
 app.get('/current-track', (req, res) => {
-    // Évite une erreur si la playlist n'est pas encore chargée
     if (playlist.length === 0) {
         return res.json({ name: "Chargement...", author: "", cover: "" })
     }
@@ -113,7 +142,6 @@ app.get('/current-track', (req, res) => {
     res.json(trackInfo)
 })
 
-// HTTP Stream Endpoint for browsers
 app.get('/stream', (req, res) => {
     res.writeHead(200, {
         'Content-Type': 'audio/mpeg',
@@ -122,14 +150,14 @@ app.get('/stream', (req, res) => {
         'Cache-Control': 'no-cache, no-store'
     })
 
-    // Add this client to our broadcast list
     clients.add(res)
     console.log(styleText(['bold', 'green'], `Listener connected (${clients.size} total)`))
+    broadcastListenerCount();
 
-    // Remove client when they close the tab/stop playing
     req.on('close', () => {
         clients.delete(res)
         console.log(styleText(['bold', 'red'], `Listener left (${clients.size} total)`))
+        broadcastListenerCount();
     });
 });
 
@@ -138,10 +166,37 @@ app.use(cors())
 // Serve the static frontend
 app.use(express.static(path.join(import.meta.dirname, 'public')))
 
-// 6. Lancement du serveur (toujours à la fin)
-await loadPlaylist()
-playTrack(currentTrackIndex) // Start the stream loop immediately
-
-app.listen(PORT, () => {
+// 6. Lancement du serveur ET des WebSockets
+const server = app.listen(PORT, () => {
     console.log(`Radio running at http://localhost:${PORT}`)
 })
+
+// On attache les WebSockets à notre serveur web
+wss = new WebSocketServer({ server })
+
+wss.on('connection', (ws) => {
+    console.log(styleText(['bold', 'cyan'], '🔌 Un client Web est connecté pour les infos !'))
+
+    // On lui envoie directement la musique en cours pour ne pas attendre la suivante
+    if (playlist.length > 0) {
+        const trackPath = playlist[currentTrackIndex]
+        const trackInfo = getTrackInfoFromJSON(trackPath) 
+        ws.send(JSON.stringify({
+            type: 'track',
+            data: trackInfo
+        }))
+    }
+
+    ws.send(JSON.stringify({
+        type: 'listeners',
+        count: clients.size
+    }))
+
+    ws.on('close', () => {
+        console.log(styleText(['bold', 'magenta'], '❌ Un client Web a fermé la page'))
+    })
+})
+
+// On charge la playlist puis on lance le son
+await loadPlaylist()
+playTrack(currentTrackIndex)
