@@ -1,14 +1,16 @@
-<script>
+<script setup>
+    import {ref, onMounted, nextTick} from 'vue';
+
 
 </script>
 
 <template>
     
     <div id="chatZone">
-        <div id="chatBox">
+        <div id="chatBox" class="white" @click ="toggleChat">
             <div id="messages"></div>
         </div>
-        <input type="text" id="messageInput" placeholder="Votre message">
+        <input type="text" id="messageInput" class="white" placeholder="Votre message">
     </div>
 
 </template>
