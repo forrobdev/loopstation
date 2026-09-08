@@ -45,6 +45,7 @@ function animNextMusic(name, author, cover) {
             document.querySelector("#cover").src = cover;
             document.querySelector("#author").innerHTML = author;
             document.querySelector("#name").innerHTML = name;
+            updateLikeIcon(name);
             
         }
     })
@@ -156,6 +157,13 @@ function isLiked(songName) {
     return false;
 }
 
+function updateLikeIcon(songName) {
+    if (isLiked(songName)) {
+        like.querySelector("img").setAttribute("src", "assets/liked.png");
+    } else {
+        like.querySelector("img").setAttribute("src", "assets/like.png");
+    }
+}
 
 
 const audio = document.getElementById('radio-audio');
@@ -328,12 +336,22 @@ socket.addEventListener('open', () => {
 });
 
 socket.addEventListener('message', (event) => {
-    const morceaux = event.data.split(':');
+    const morceauxPrincipaux = event.data.split('|');
+    const partieMessage = morceauxPrincipaux[0];
+    const timestampRecu = morceauxPrincipaux[1];
+
+    const morceaux = partieMessage.split(':');
     const pseudoRecuperer = morceaux[0];
     const messageRecuperer = morceaux[1];
+
+    const dateMessage = new Date(Number(timestampRecu));
+    const heures = dateMessage.getHours().toString().padStart(2, '0');
+    const minutes = dateMessage.getMinutes().toString().padStart(2, '0');
+    const heureAffichee = heures + ':' + minutes;
+
     
     const p = document.createElement('p');
-    p.innerHTML = '<span style="color: #FFBF00;">' + pseudoRecuperer + ':</span> ' + messageRecuperer;
+    p.innerHTML = '<span style="color: #FFBF00;">' + pseudoRecuperer + ':</span> ' + messageRecuperer + ' <span style="opacity: 0.5; font-size: 0.8em;">' + heureAffichee + '</span>';
     chatDiv.appendChild(p);
 
     chatBox.scrollTop = chatBox.scrollHeight;
@@ -379,7 +397,8 @@ document.addEventListener('keydown', (e) => {
         const texte = messageInput.value;
 
         if (texte !== '' && texte.length <= 1000) {
-            socket.send(pseudo + ' : '+ texte);
+            const timestamp = Date.now();
+            socket.send(pseudo + ' : '+ texte + '|'+ timestamp);
             messageInput.value = '';
         }
     }
