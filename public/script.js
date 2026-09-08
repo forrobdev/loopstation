@@ -1,3 +1,30 @@
+//Choisir pseudo/récupérer le pseudo dans le local Storage
+
+let pseudo = 'Anonyme';
+
+async function chargerPseudo() {
+    const reponse = await fetch('pseudos.json');
+    const data = await reponse.json();
+    pseudo = data.pseudos[Math.floor(Math.random() * data.pseudos.length)];
+
+    console.log("Pseudo :" + pseudo)
+
+    localStorage.setItem("pseudo", pseudo)
+}
+
+if (localStorage.getItem("pseudo") == null) {
+    chargerPseudo()
+} else {
+    pseudo = localStorage.getItem("pseudo")
+    console.log("Pseudo :" + pseudo)
+}
+
+
+
+
+
+
+
 const buttonSound = new Audio("/assets/button.mp3")
 
 const ws = new WebSocket(`ws://${window.location.host}`);
@@ -135,6 +162,7 @@ const audio = document.getElementById('radio-audio');
 const canvas = document.getElementById('visualizer-canvas');
 const pause = document.querySelector("#pause");
 const like = document.querySelector("#like");
+const chatButton = document.querySelector("#chat");
 
 like.addEventListener("click", () => {
     buttonSound.play()
@@ -202,6 +230,33 @@ pause.addEventListener("click", () => {
     }
 })
 
+let chatOpened = true;
+
+chatButton.addEventListener("click", () => {
+    buttonSound.play()
+
+    if (chatOpened) {
+        gsap.to("#chatZone", {
+            duration : 0.3,
+            ease : "power4.out",
+            opacity : 0,
+            y : 200,
+        })
+
+        chatOpened = false
+    } else {
+        gsap.to("#chatZone", {
+            duration : 0.3,
+            ease : "power4.out",
+            opacity : 1,
+            y : 0,
+        })
+
+        chatOpened = true
+    }
+    
+})
+
 // --- INITIALISATION BUTTERCHURN ---
 function initVisualizer() {
     // 1. Créer le moteur audio du navigateur
@@ -265,6 +320,8 @@ const bounce = gsap.timeline({ defaults: { duration: 0.8 }, repeat: -1, repeatDe
 
 const socket = new WebSocket('ws://localhost:7500');
 const chatDiv = document.querySelector("#messages");
+const chatBox = document.querySelector("#chatBox");
+
 
 socket.addEventListener('open', () => {
     console.log('Connecté au serveur WebSocket');
@@ -279,6 +336,8 @@ socket.addEventListener('message', (event) => {
     p.innerHTML = '<span style="color: #FFBF00;">' + pseudoRecuperer + ':</span> ' + messageRecuperer;
     chatDiv.appendChild(p);
 
+    chatBox.scrollTop = chatBox.scrollHeight;
+    
     setTimeout(() => {
         p.remove();
     }, 50000);
@@ -288,24 +347,40 @@ socket.addEventListener('message', (event) => {
 const pseudoInput = document.getElementById('pseudoInput');
 const validerPseudo = document.getElementById('validerPseudo')
 
-let pseudo = 'Anonyme';
 
-validerPseudo.addEventListener('click', () => {
-    if (pseudoInput.value.trim() !== ''){
-        pseudo = pseudoInput.value 
-        console.log('Pseudo choisi:', pseudo);
-    }
-});
 
-const sendBtn = document.getElementById('sendBtn');
+
+
 const messageInput = document.getElementById('messageInput');
+let messageInputFocused = false
 
-sendBtn.addEventListener('click', () => {
-    const texte = messageInput.value;
+messageInput.addEventListener("focus", () => {
+    console.log("Focus")
+    messageInputFocused = true
+})
 
-    if (texte !== '') {
-        socket.send(pseudo + ' : '+ texte);
-        messageInput.value = '';
+messageInput.addEventListener("focusout", () => {
+    console.log("Pas focus")
+    messageInputFocused = false
+})
+
+
+document.addEventListener('keydown', (e) => {
+
+    buttonSound.currentTime = 0; 
+    
+    if (messageInputFocused) {
+        buttonSound.play();
+    }
+    
+
+    //Si entrer alors enviyer le message
+    if (e.keyCode == 13) {
+        const texte = messageInput.value;
+
+        if (texte !== '' && texte.length <= 1000) {
+            socket.send(pseudo + ' : '+ texte);
+            messageInput.value = '';
+        }
     }
 });
-
