@@ -1,6 +1,28 @@
 <script setup>
     import {ref, onMounted, nextTick} from 'vue';
 
+    let pseudo = 'Anonyme';
+    const chatButton = document.querySelector("#chat");
+
+    async function chargerPseudo() {
+        const reponse = await fetch('pseudos.json');
+        const data = await reponse.json();
+        pseudo = data.pseudos[Math.floor(Math.random() * data.pseudos.length)];
+
+        console.log("Pseudo :" + pseudo)
+
+        localStorage.setItem("pseudo", pseudo)
+    }
+    onMounted (async() => {
+        if (localStorage.getItem("pseudo") == null) {
+            await chargerPseudo()
+        } else {
+            pseudo = localStorage.getItem("pseudo")
+            console.log("Pseudo :" + pseudo)
+        }
+    })
+    
+
 
 </script>
 

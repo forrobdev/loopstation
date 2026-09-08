@@ -238,7 +238,7 @@ pause.addEventListener("click", () => {
     }
 })
 
-let chatOpened = true;
+const chatOpened = ref(true);
 
 chatButton.addEventListener("click", () => {
     buttonSound.play()
