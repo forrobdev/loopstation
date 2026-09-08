@@ -124,6 +124,10 @@ socket.addEventListener('message', (event) => {
     const p = document.createElement('p');
     p.innerHTML = '<span style="color: #FFBF00;">' + pseudoRecuperer + ':</span> ' + messageRecuperer;
     chatDiv.appendChild(p);
+
+    setTimeout(() => {
+        p.remove();
+    }, 50000);
 });
 
 
