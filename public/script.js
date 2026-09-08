@@ -336,6 +336,10 @@ socket.addEventListener('message', (event) => {
     chatDiv.appendChild(p);
 
     chatBox.scrollTop = chatBox.scrollHeight;
+    
+    setTimeout(() => {
+        p.remove();
+    }, 50000);
 });
 
 
