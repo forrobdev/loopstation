@@ -1,10 +1,13 @@
 import express from "express"
 import path from "node:path"
 import fs from 'node:fs'
-import {spawn} from "node:child_process"
+import { spawn, execSync } from "node:child_process"
 import cors from "cors"
 import {styleText} from 'node:util'
 import { WebSocketServer, WebSocket } from 'ws';
+
+//Temporairez
+import readline from 'node:readline';
 
 const app = express()
 const PORT = 3000
@@ -59,56 +62,92 @@ const loadPlaylist = async () => {
     console.log(styleText(['bold', 'green'], `Loaded ${playlist.length} tracks.`))
 }
 
+let jingles = [];
+
+const loadJingles = async () => {
+    try {
+        // Va chercher tous les mp3 dans ton dossier public/jingles/
+        const jingleFiles = await fs.promises.glob("public/jingles/**.mp3");
+        for await (const jingle of jingleFiles) {
+            jingles.push(jingle);
+        }
+        console.log(styleText(['bold', 'green'], `Loaded ${jingles.length} jingles.`));
+    } catch (error) {
+        console.log(styleText(['bold', 'yellow'], 'Aucun jingle trouvé.', error.message));
+    }
+}
+
+function getMediaDuration(filePath) {
+    try {
+        const output = execSync(`ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${filePath}"`);
+        return parseFloat(output.toString().trim());
+    } catch (err) {
+        console.log(styleText(['bold', 'yellow'], 'Erreur ffprobe, durée par défaut 5s utilisée'));
+        return 5;
+    }
+}
+
 // 2. Stream the current track, then automatically trigger the next
 const playTrack = (index) => {
-    const trackPath = playlist[index]
-    console.log(`▶ Okok, now playing: ${path.basename(trackPath)}`)
+    const trackPath = playlist[index];
+    console.log(`▶ Okok, now playing: ${path.basename(trackPath)}`);
 
     // --- WEBSOCKET : On prévient tout le monde que la musique change ---
     if (wss) {
-        const trackInfo = getTrackInfoFromJSON(trackPath)
-        const message = JSON.stringify({
-            type: 'track',
-            data: trackInfo
-        })
+        const trackInfo = getTrackInfoFromJSON(trackPath);
+        const message = JSON.stringify({ type: 'track', data: trackInfo });
         
         wss.clients.forEach((client) => {
-            // readyState === 1 signifie que la connexion est bien ouverte
-            if (client.readyState === 1) { 
-                client.send(message)
-            }
-        })
+            if (client.readyState === 1) client.send(message);
+        });
     }
     // ------------------------------------------------------------------
 
-    // Spawn FFmpeg to convert this single file to a standard MP3 stream
-    ffmpegProcess = spawn('ffmpeg', [
-        '-re',                // Read at native speed (real-time)
-        '-i', trackPath,
-        '-vn',                // Ignore la vidéo/image de couverture
-        '-f', 'mp3',          // Output format: MP3
-        '-c:a', 'libmp3lame', // Encode to MP3
-        '-b:a', '128k',       // Constant bitrate
-        '-ar', '44100',       // 44.1kHz sample rate
-        '-ac', '2',           // Stereo
-        'pipe:1'              // Output to stdout
-    ])
+    let ffmpegArgs = [];
 
-    // Push the audio chunks to all connected clients
+    // Si on a des jingles chargés en mémoire
+    if (jingles.length > 0) {
+        const randomJingle = jingles[Math.floor(Math.random() * jingles.length)];
+        const jingleDuration = getMediaDuration(randomJingle);
+        
+        console.log(`📢 Mixage en cours avec le jingle : ${path.basename(randomJingle)}`);
+
+        ffmpegArgs = [
+            '-re',
+            '-i', trackPath,       // Input 0 : La musique
+            '-i', randomJingle,    // Input 1 : Le jingle
+            '-filter_complex', 
+            `[0:a]volume='if(lt(t,${jingleDuration}), 0.3, min(1, 0.3 + (t-${jingleDuration})/2))':eval=frame[music_ducked];[1:a]volume=3.0[jingle_boosted];[music_ducked][jingle_boosted]amix=inputs=2:duration=first[out]`,
+            '-map', '[out]',
+            '-f', 'mp3',
+            '-c:a', 'libmp3lame',
+            '-b:a', '128k',
+            '-ar', '44100',
+            '-ac', '2',
+            'pipe:1'
+        ];
+    } else {
+        // Fallback classique si aucun jingle n'est trouvé
+        ffmpegArgs = [
+            '-re', '-i', trackPath, '-vn', '-f', 'mp3',
+            '-c:a', 'libmp3lame', '-b:a', '128k', '-ar', '44100', '-ac', '2', 'pipe:1'
+        ];
+    }
+
+    // Lancement du process
+    ffmpegProcess = spawn('ffmpeg', ffmpegArgs);
+
     ffmpegProcess.stdout.on('data', (chunk) => {
-        for (const client of clients) {
-            client.write(chunk)
-        }
-    })
+        for (const client of clients) client.write(chunk);
+    });
 
     ffmpegProcess.on('close', (code) => {
-        ffmpegProcess = null
-        // Move to next track (loop back to 0 at the end)
-        currentTrackIndex = (currentTrackIndex + 1) % playlist.length
-        console.log(`Aaaaaaaaand, are you ready for the next track?`)
-        playTrack(currentTrackIndex)
+        ffmpegProcess = null;
+        currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+        console.log(`Aaaaaaaaand, are you ready for the next track?`);
+        playTrack(currentTrackIndex);
     });
-}
+};
 
 // 3. Fonctions utilitaires
 // Récupérer les infos des tracks
@@ -199,6 +238,7 @@ wss.on('connection', (ws) => {
 
 // On charge la playlist puis on lance le son
 await loadPlaylist()
+await loadJingles();
 playTrack(currentTrackIndex)
 
 
@@ -235,4 +275,28 @@ chatWss.on('connection', (ws) => {
     ws.on('close', () => {
         console.log('Client déconnecté du chat');
     });
+});
+
+
+
+//Temporairze 
+
+
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+rl.on('line', (input) => {
+    const commande = input.trim().toLowerCase();
+
+    if (commande === 'skip' || commande === 'next') {
+        if (ffmpegProcess) {
+            console.log(styleText(['bold', 'magenta'], '⏭  Skip demandé, passage direct au titre suivant...'));
+            // Tuer le processus déclenche automatiquement l'événement 'close' de ffmpeg
+            ffmpegProcess.kill('SIGKILL'); 
+        } else {
+            console.log(styleText(['bold', 'yellow'], 'Aucune musique en cours de lecture.'));
+        }
+    }
 });
