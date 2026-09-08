@@ -45,6 +45,7 @@ function animNextMusic(name, author, cover) {
             document.querySelector("#cover").src = cover;
             document.querySelector("#author").innerHTML = author;
             document.querySelector("#name").innerHTML = name;
+            updateLikeIcon(name);
             
         }
     })
@@ -127,7 +128,7 @@ gsap.from("#nowPlaying",
         delay: 1,
     });
 
-const likeBtn = document.getElementById('likeBtn')
+const likeBtn = document.getElementById('like')
 
 // Récupère la liste des likes déjà sauvegardés (ou tableau vide si rien)
 function getLikes() {
@@ -156,6 +157,13 @@ function isLiked(songName) {
     return false;
 }
 
+function updateLikeIcon(songName) {
+    if (isLiked(songName)) {
+        like.querySelector("img").setAttribute("src", "assets/liked.png");
+    } else {
+        like.querySelector("img").setAttribute("src", "assets/like.png");
+    }
+}
 
 
 const audio = document.getElementById('radio-audio');
@@ -164,33 +172,34 @@ const pause = document.querySelector("#pause");
 const like = document.querySelector("#like");
 const chatButton = document.querySelector("#chat");
 
-// like.addEventListener("click", () => {
-//     buttonSound.play()
-//     const stateImg = like.querySelector("img").getAttribute("src")
+like.addEventListener("click", () => {
+    buttonSound.play()
+    const stateImg = like.querySelector("img").getAttribute("src")
     
-//     if (stateImg == "assets/like.png") {
-//         like.querySelector("img").setAttribute("src","assets/liked.png")
-//     } else {
-//         like.querySelector("img").setAttribute("src","assets/like.png")
-//     }
+    if (stateImg == "assets/like.png") {
+        like.querySelector("img").setAttribute("src","assets/liked.png")
+    } else {
+        like.querySelector("img").setAttribute("src","assets/like.png")
+    }
+});
 
-// likeBtn.addEventListener('click', () => {
-//     const songName = document.getElementById('name').textContent;
-//     const artist = document.getElementById('author').textContent;
-//     const cover = document.getElementById('cover').src;
+likeBtn.addEventListener('click', () => {
+    const songName = document.getElementById('name').textContent;
+    const artist = document.getElementById('author').textContent;
+    const cover = document.getElementById('cover').src;
 
-//     let likes = getLikes();
-//     if (isLiked(songName)) {
-//         likes = likes.filter(function(song) {
-//             return song.name !== songName;
-//         });
-//     } else {
-//         likes.push({ name: songName, artist: artist, cover: cover });
-//     }
+    let likes = getLikes();
+    if (isLiked(songName)) {
+        likes = likes.filter(function(song) {
+            return song.name !== songName;
+        });
+    } else {
+        likes.push({ name: songName, artist: artist, cover: cover });
+    }
 
-//     saveLikes(likes);
-//     console.log('Likes actuels :', likes);
-// })
+    saveLikes(likes);
+    console.log('Likes actuels :', likes);
+});
 
 let visualizerInit = false;
 
@@ -327,12 +336,22 @@ socket.addEventListener('open', () => {
 });
 
 socket.addEventListener('message', (event) => {
-    const morceaux = event.data.split(':');
+    const morceauxPrincipaux = event.data.split('|');
+    const partieMessage = morceauxPrincipaux[0];
+    const timestampRecu = morceauxPrincipaux[1];
+
+    const morceaux = partieMessage.split(':');
     const pseudoRecuperer = morceaux[0];
     const messageRecuperer = morceaux[1];
+
+    const dateMessage = new Date(Number(timestampRecu));
+    const heures = dateMessage.getHours().toString().padStart(2, '0');
+    const minutes = dateMessage.getMinutes().toString().padStart(2, '0');
+    const heureAffichee = heures + ':' + minutes;
+
     
     const p = document.createElement('p');
-    p.innerHTML = '<span style="color: #FFBF00;">' + pseudoRecuperer + ':</span> ' + messageRecuperer;
+    p.innerHTML = '<span style="color: #FFBF00;">' + pseudoRecuperer + ':</span> ' + messageRecuperer + ' <span style="opacity: 0.5; font-size: 0.8em;">' + heureAffichee + '</span>';
     chatDiv.appendChild(p);
 
     chatBox.scrollTop = chatBox.scrollHeight;
@@ -378,7 +397,8 @@ document.addEventListener('keydown', (e) => {
         const texte = messageInput.value;
 
         if (texte !== '' && texte.length <= 1000) {
-            socket.send(pseudo + ' : '+ texte);
+            const timestamp = Date.now();
+            socket.send(pseudo + ' : '+ texte + '|'+ timestamp);
             messageInput.value = '';
         }
     }
