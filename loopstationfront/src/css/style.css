@@ -1,0 +1,17 @@
+@import url(./reset.css);
+@font-face {
+    font-family: BebasNeue;
+    src: url(/BebasNeue-Regular.ttf) format(TrueType);
+}
+
+body {
+    font-family: BebasNeue;
+    background-color: maroon;
+
+}
+
+.white {
+    filter: drop-shadow(0px 0px 20px white);
+    background-color: #fff;
+    border: none;
+}
