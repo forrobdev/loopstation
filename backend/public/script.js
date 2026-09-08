@@ -348,8 +348,7 @@ socket.addEventListener('message', (event) => {
     const heures = dateMessage.getHours().toString().padStart(2, '0');
     const minutes = dateMessage.getMinutes().toString().padStart(2, '0');
     const heureAffichee = heures + ':' + minutes;
-
-    
+      
     const p = document.createElement('p');
     p.innerHTML = '<span style="color: #FFBF00;">' + pseudoRecuperer + ':</span> ' + messageRecuperer + ' <span style="opacity: 0.5; font-size: 0.8em;">' + heureAffichee + '</span>';
     chatDiv.appendChild(p);
@@ -358,7 +357,7 @@ socket.addEventListener('message', (event) => {
     
     setTimeout(() => {
         p.remove();
-    }, 50000);
+    }, 60000);
 });
 
 
