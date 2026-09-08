@@ -100,7 +100,7 @@ gsap.from("#nowPlaying",
         delay: 1,
     });
 
-const likeBtn = document.getElementById('likeBtn')
+const likeBtn = document.getElementById('like')
 
 // Récupère la liste des likes déjà sauvegardés (ou tableau vide si rien)
 function getLikes() {
@@ -136,33 +136,34 @@ const canvas = document.getElementById('visualizer-canvas');
 const pause = document.querySelector("#pause");
 const like = document.querySelector("#like");
 
-// like.addEventListener("click", () => {
-//     buttonSound.play()
-//     const stateImg = like.querySelector("img").getAttribute("src")
+like.addEventListener("click", () => {
+    buttonSound.play()
+    const stateImg = like.querySelector("img").getAttribute("src")
     
-//     if (stateImg == "assets/like.png") {
-//         like.querySelector("img").setAttribute("src","assets/liked.png")
-//     } else {
-//         like.querySelector("img").setAttribute("src","assets/like.png")
-//     }
+    if (stateImg == "assets/like.png") {
+        like.querySelector("img").setAttribute("src","assets/liked.png")
+    } else {
+        like.querySelector("img").setAttribute("src","assets/like.png")
+    }
+});
 
-// likeBtn.addEventListener('click', () => {
-//     const songName = document.getElementById('name').textContent;
-//     const artist = document.getElementById('author').textContent;
-//     const cover = document.getElementById('cover').src;
+likeBtn.addEventListener('click', () => {
+    const songName = document.getElementById('name').textContent;
+    const artist = document.getElementById('author').textContent;
+    const cover = document.getElementById('cover').src;
 
-//     let likes = getLikes();
-//     if (isLiked(songName)) {
-//         likes = likes.filter(function(song) {
-//             return song.name !== songName;
-//         });
-//     } else {
-//         likes.push({ name: songName, artist: artist, cover: cover });
-//     }
+    let likes = getLikes();
+    if (isLiked(songName)) {
+        likes = likes.filter(function(song) {
+            return song.name !== songName;
+        });
+    } else {
+        likes.push({ name: songName, artist: artist, cover: cover });
+    }
 
-//     saveLikes(likes);
-//     console.log('Likes actuels :', likes);
-// })
+    saveLikes(likes);
+    console.log('Likes actuels :', likes);
+});
 
 let visualizerInit = false;
 
