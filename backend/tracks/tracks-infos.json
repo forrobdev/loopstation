@@ -26,6 +26,37 @@
         "name" : "Si Ai",
         "cover" : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQF-faweDtS0ySD-Mmz6mYpWjS7laCUoEuKw4EFsMbIsw&s=10"
 
+    },
+    {
+        "track_id" : 4,
+        "author" : "SAiiLOR",
+        "name" : "Maybe",
+        "cover" : "https://i.scdn.co/image/ab67616d0000b273e789f08c80caf688a8494585"
+    },
+    {
+        "track_id" : 5,
+        "author" : "DJ Windows 7",
+        "name" : "House Music TillDeath",
+        "cover" : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSWi2TD7vf_udGS-jQGtrW0BaoyyWLE7fzcPe4Yk632tCrpCRLHKcFUFlY&s=10"
+    },
+    {
+        "track_id" : 6,
+        "author" : "Zerb",
+        "name" : "Mwaki",
+        "cover" : "https://i1.sndcdn.com/artworks-oR5ZhuGty1aDffw7-G8uQbw-t500x500.jpg"
+    },
+    {
+        "track_id" : 7,
+        "author" : "Adam Port",
+        "name" : "Move",
+        "cover" : "https://cdn-images.dzcdn.net/images/cover/d9c65979a9b1326692aef6b4b7c367b7/0x1900-000000-80-0-0.jpg"
+    },
+    {
+        "track_id" : 8,
+        "author" : "LOSTBOYJAY",
+        "name" : "COULD BE WRONG",
+        "cover" : "https://i1.sndcdn.com/artworks-fIMLy0Q26ln7K8FV-hOG9EA-t500x500.jpg"
     }
+    
     
 ]

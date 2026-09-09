@@ -117,7 +117,7 @@ const playTrack = (index) => {
             '-i', trackPath,       // Input 0 : La musique
             '-i', randomJingle,    // Input 1 : Le jingle
             '-filter_complex', 
-            `[0:a]volume='if(lt(t,${jingleDuration}), 0.3, min(1, 0.3 + (t-${jingleDuration})/2))':eval=frame[music_ducked];[1:a]volume=3.0[jingle_boosted];[music_ducked][jingle_boosted]amix=inputs=2:duration=first[out]`,
+            `[0:a]volume='if(lt(t,${jingleDuration}), 0.4, min(1, 0.4 + (t-${jingleDuration})/2))':eval=frame[music_ducked];[1:a]volume=4.0[jingle_boosted];[music_ducked][jingle_boosted]amix=inputs=2:duration=first[out]`,
             '-map', '[out]',
             '-f', 'mp3',
             '-c:a', 'libmp3lame',
