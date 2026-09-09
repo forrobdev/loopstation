@@ -3,6 +3,7 @@
 import MusicPlaying from './components/MusicPlaying.vue';
 import Background from './components/Background.vue';
 import Online from './components/Online.vue';
+import Chat from './components/Chat.vue';
 
 </script>
 
@@ -14,6 +15,8 @@ import Online from './components/Online.vue';
 
   <MusicPlaying></MusicPlaying>
 
+  <Chat></Chat>
+  
 </template>
 
 <style scoped>
