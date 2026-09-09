@@ -270,7 +270,7 @@ chatWss.on('connection', (ws) => {
                 if (texte.includes("<") || texte.includes(">")) {
                     client.send(JSON.stringify({
                         id : 0,
-                        nickname : Bot,
+                        nickname : "Bot",
                         text : "Impossible d'utiliser `<`ou `>` dans votre message !",
                         time : Date.now()
                     }));
