@@ -171,4 +171,26 @@ onMounted(() => {
     margin-top : -10px;
 }
 
+@media (max-width: 750px) {
+    #musicPlaying {
+        width: 130px;
+        height: 170px;
+        top: 30px;
+        left: 20px;
+    }
+
+    #nowPlaying {
+        font-size: 12px;
+    }
+
+    #name {
+        font-size: 16px;
+    }
+
+    #author {
+        margin-top : -5px;
+        font-size: 12px;
+    }
+}
+
 </style>

@@ -1,10 +1,13 @@
 <script setup>
     import {ref, onMounted, nextTick} from 'vue';
     import {gsap} from 'gsap';
+    import buttonSource from "../assets/button.mp3"
+    import { PhPaperPlaneTilt } from "@phosphor-icons/vue";
+
 
 
     let nickname = 'Anonyme';
-    const buttonSound = new Audio('/assets/button.mp3');
+    const buttonSound = new Audio(buttonSource);
     
 
     async function chargerPseudo() {
@@ -95,7 +98,7 @@
     
         if (text !== '' && text.length <= 1000 && socket) {
             buttonSound.currentTime = 0;
-            // buttonSound.play();
+            buttonSound.play();
     
             const timestamp = Date.now();
             socket.send(nickname + ' : ' + text + '|' + timestamp);
@@ -103,6 +106,30 @@
         }
     }
 
+    function messageInputFocus() {
+        console.log("Focus")
+        messageInputFocused = true
+    }
+
+    
+
+    document.addEventListener('keydown', (e) => {
+
+        buttonSound.currentTime = 0; 
+        
+        if (messageInputFocused) {
+            buttonSound.play();
+        }
+    });
+
+    onMounted(() => {
+        gsap.to("#chatZone", {
+            duration : 0.3,
+            ease : "power4.out",
+            opacity : 0,
+            y : 200,
+        })
+    })
 
 
 </script>
@@ -120,7 +147,11 @@
             </div>
         </div>
 
-        <input type="text" id="messageInput" class="white" placeholder="Votre message" v-model="messageText" @keyup.enter="sendMessage" @focus="messageInputFocused = true" @blur="messageInputFocused = false">
+        <div id="chatBottom" class="white">
+            <input type="text" id="messageInput" placeholder="Votre message" v-model="messageText" @keyup.enter="sendMessage" @focus="messageInputFocused = true" @blur="messageInputFocused = false">
+            <PhPaperPlaneTilt @click="sendMessage" :size="28" weight="fill" style="cursor: pointer;" />
+        </div>
+        
     </div>
 
     <div id="Chat" @click="ToggleChat"></div>
@@ -131,7 +162,7 @@
 <style>
 
 #chatZone {
-    width: fit-content;
+    width: 100%;
     height: fit-content;
     display: flex;
     flex-direction: column;
@@ -141,10 +172,9 @@
     gap : 10px;
 
     position: fixed;
-    bottom: 50px;
-    right: 50px;
+    bottom: 150px;
 
-    z-index: 10;
+    z-index: -1;
 }
 
 #chatBox {
@@ -162,13 +192,26 @@
 }
 
 #messageInput {
+    border: none;
+    background-color: none;
+    color : black;
+    width: 100%;
+    outline: none;
+}
+
+#chatBottom {
+    gap: 10px;
+    overflow: hidden;
     width : 280px;
     border: solid #CACACA 1px;
     border-radius: 18px;
-    padding: 10px 10px;
     background-color: #ffffff;
-    color : black;
-    outline: #FFBF00;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 15px;
 }
+
+
 
 </style>
