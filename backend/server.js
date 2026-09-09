@@ -267,7 +267,17 @@ chatWss.on('connection', (ws) => {
         // 3. On utilise bien chatWss.clients ici aussi
         chatWss.clients.forEach((client) => {
             if (client.readyState === WebSocket.OPEN) {
-                client.send(texte);
+                if (texte.includes("<") || texte.includes(">")) {
+                    client.send(JSON.stringify({
+                        id : 0,
+                        nickname : Bot,
+                        text : "Impossible d'utiliser `<`ou `>` dans votre message !",
+                        time : Date.now()
+                    }));
+                } else {
+                    client.send(texte);
+                }
+                
             }
         });
     });
@@ -300,3 +310,4 @@ rl.on('line', (input) => {
         }
     }
 });
+
