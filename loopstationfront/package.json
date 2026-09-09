@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@phosphor-icons/vue": "^2.2.1",
     "butterchurn": "^2.6.7",
     "butterchurn-presets": "^2.4.7",
     "gsap": "^3.15.0",

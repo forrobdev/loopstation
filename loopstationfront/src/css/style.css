@@ -15,3 +15,43 @@ body {
     background-color: #fff;
     border: none;
 }
+
+.action {
+    background-color: #fff;
+    border-radius: 100px;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow : hidden;
+    width: 60px;
+    height: 60px;
+
+    
+
+    cursor : pointer;
+    transition : 0.3s ease-in-out;
+}
+
+.action:hover {
+    scale: 1.05;
+}
+
+.action img {
+    height : auto;
+    width : 20px;
+}
+
+#actionButtons {
+    display : flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+
+    position: absolute;
+    bottom : 40px;
+
+    z-index: 2;
+    width: 100%;
+    height: fit-content;
+}

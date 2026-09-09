@@ -1,60 +1,126 @@
-<script>
-const canvas = document.getElementById('visualizer-canvas');
+<script setup>
+import { onMounted, ref } from 'vue';
+import butterchurn from 'butterchurn';
+import butterchurnPresets from 'butterchurn-presets';
+import ActionButtons from './ActionButtons.vue';
+import welcomeSource from "../assets/welcome.mp3"
+import { gsap } from "gsap"
+
+
+const audioRef = ref(null);
+const canvasRef = ref(null);
+let visualizerInit = false;
+let visualizer = null;
+
+const welcome = new Audio(welcomeSource)
+
 
 function initVisualizer() {
-    // 1. Créer le moteur audio du navigateur
+    const canvas = canvasRef.value;
+    const audio = audioRef.value;
+
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-
-    // 2. Lier notre balise <audio> au moteur
     const sourceNode = audioContext.createMediaElementSource(audio);
-    sourceNode.connect(audioContext.destination); // Pour qu'on puisse entendre le son sortant
+    sourceNode.connect(audioContext.destination);
 
-    // 3. Initialiser Butterchurn
-    // Selon comment le CDN charge le script, on récupère la bonne fonction
     const createVis = butterchurn.default ? butterchurn.default.createVisualizer : butterchurn.createVisualizer;
     
-    const visualizer = createVis(audioContext, canvas, {
+    visualizer = createVis(audioContext, canvas, {
         width: canvas.width,
         height: canvas.height,
-        pixelRatio: window.devicePixelRatio || 1
+        pixelRatio: 1
     });
 
-    // 4. Récupérer les "presets" (les différents effets visuels de Milkdrop)
     const presetsObj = butterchurnPresets.default ? butterchurnPresets.default.getPresets() : butterchurnPresets.getPresets();
     const presetNames = Object.keys(presetsObj);
 
-    // Fonction pour charger un effet au hasard
     const loadRandomPreset = (transitionTime = 0) => {
         const randomName = presetNames[Math.floor(Math.random() * presetNames.length)];
         visualizer.loadPreset(presetsObj[randomName], transitionTime);
     };
 
-    // Charger le premier effet immédiatement (0s de transition)
     loadRandomPreset(0);
-
-    // Bonus : Changer d'effet visuel toutes les 15 secondes avec un beau fondu (2.7s)
     setInterval(() => loadRandomPreset(2.7), 15000);
 
-    // 5. La boucle d'animation fluide à 60 FPS
     function render() {
         requestAnimationFrame(render);
         visualizer.render();
     }
     
-    // Lancer la boucle
     render();
 }
 
+function playVoice(voiceAudio) {
+
+    const bgMusic = document.getElementById("radio-audio");
+
+    if (bgMusic) {
+        gsap.to(bgMusic, { volume: 0.05, duration: 0.5 });
+    }
+
+    voiceAudio.play();
+
+    voiceAudio.onended = () => {
+        if (bgMusic) {
+            gsap.to(bgMusic, { volume: 1, duration: 0.5 });
+        }
+    };
+}
+
+let firstLaunch = true
+
+function playMusic() {
+    console.log("Lancé la team");
+
+    if (firstLaunch) {
+        playVoice(welcome)
+        firstLaunch = false
+    }
+    
+    const audio = audioRef.value;
+    const timestamp = new Date().getTime();
+    audio.src = `/stream?t=${timestamp}`;
+    
+    audio.play().catch(err => console.log("Erreur lecture audio:", err));
+
+    if (!visualizerInit) {
+        initVisualizer();
+        visualizerInit = true;
+    }
+}
+
+function pauseMusic() {
+    console.log("STOPPP");
+    const audio = audioRef.value;
+    audio.pause();
+}
+
+
 </script>
 
-
 <template>
+    <canvas ref="canvasRef" id="visualizer-canvas" width="800" height="600" style="background: black;"></canvas>
+  
+    <ActionButtons @play-music="playMusic" @pause-music="pauseMusic"/>
 
-<canvas id="visualizer-canvas" width="800" height="600" style="background: black;"></canvas>
 
+    <audio ref="audioRef" id="radio-audio" controls crossorigin="anonymous"></audio>
 </template>
 
 <style>
+
+audio {
+    display: none;
+}
+
+canvas {
+    height: 100%;
+    width: 100%;
+    position : absolute;
+    z-index: -1;
+    top: 0px;
+}
+
 
 
 
