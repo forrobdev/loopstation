@@ -25,7 +25,7 @@
             console.log("Nickname :" + nickname)
         }
 
-        socket = new WebSocket('ws://localhost:7500');
+        socket = new WebSocket(import.meta.env.VITE_API_KEY);
 
         socket.addEventListener('open', () => {
             console.log('Connecté au serveur WebSocket');
@@ -55,15 +55,9 @@
     const messageText = ref('');
 
     function receiveMessage(event) {
-        const mainParts  = event.data.split('|');
-        const messagePart = mainParts[0];
-        const receivedTimestamp = mainParts[1];
-
-        const parts = messagePart.split(':');
-        const receivedNickname = parts[0];
-        const receivedText = parts[1];
-
-        const messageDate = new Date(Number(receivedTimestamp));
+        const data  = JSON.parse(event.data);
+  
+        const messageDate = new Date(data.timestamp);
         const hours = messageDate.getHours().toString().padStart(2, '0');
         const minutes = messageDate.getMinutes().toString().padStart(2, '0');
         const displayedTime = hours + ':' + minutes;
@@ -72,8 +66,8 @@
 
         messages.value.push({
             id,
-            nickname: receivedNickname,
-            text: receivedText,
+            nickname: data.nickname,
+            text: data.text,
             time: displayedTime
         });
 
@@ -96,9 +90,11 @@
         if (text !== '' && text.length <= 1000 && socket) {
             buttonSound.currentTime = 0;
             // buttonSound.play();
+            
     
             const timestamp = Date.now();
-            socket.send(nickname + ' : ' + text + '|' + timestamp);
+            const data = JSON.stringify({nickname : nickname, text: text, timestamp: timestamp })
+            socket.send(data);
             messageText.value = '';
         }
     }
