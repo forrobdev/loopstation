@@ -1,6 +1,6 @@
-# loopstationfront
+# Welcome to Loop Station 🔁
 
-This template should help get you started developing with Vue 3 in Vite.
+> Nothing but the groove, Infinite house, Infinite vibes. this, is Loop Station.
 
 ## Recommended IDE Setup
 

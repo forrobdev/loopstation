@@ -119,10 +119,12 @@
                 </p>
             </div>
         </div>
+
+        <input type="text" id="messageInput" class="white" placeholder="Votre message" v-model="messageText" @keyup.enter="sendMessage" @focus="messageInputFocused = true" @blur="messageInputFocused = false">
     </div>
 
     <div id="Chat" @click="ToggleChat"></div>
-    <input type="text" id="messageInput" class="white" placeholder="Votre message" v-model="messageText" @keyup.enter="sendMessage" @focus="messageInputFocused = true" @blur="messageInputFocused = false">
+    
 
 </template>
 
