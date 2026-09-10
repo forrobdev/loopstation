@@ -186,6 +186,13 @@ function toggleChat() {
     height: fit-content;
 }
 
+@media (max-width: 750px) {
+    #actionButtons {
+        bottom: 100px;
+    }
+}
+
+
 
 
 </style>

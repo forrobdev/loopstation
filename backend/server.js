@@ -66,7 +66,7 @@ let jingles = [];
 
 const loadJingles = async () => {
     try {
-        // Va chercher tous les mp3 dans ton dossier public/jingles/
+        
         const jingleFiles = await fs.promises.glob("public/jingles/**.mp3");
         for await (const jingle of jingleFiles) {
             jingles.push(jingle);
@@ -149,7 +149,7 @@ const playTrack = (index) => {
     });
 };
 
-// 3. Fonctions utilitaires
+
 // Récupérer les infos des tracks
 function getTrackInfoFromJSON(trackPath) {
     const fileName = path.basename(trackPath)
@@ -200,18 +200,21 @@ app.get('/stream', (req, res) => {
     });
 });
 
-// 5. Middlewares
+
 app.use(cors())
-// Serve the static frontend
+
 app.use(express.static(path.join(import.meta.dirname, 'public')))
 
-// 6. Lancement du serveur ET des WebSockets
+// 6. Lancement du serveur ET du WebSocket
 const server = app.listen(PORT, () => {
     console.log(`Radio running at http://localhost:${PORT}`)
 })
 
-// On attache les WebSockets à notre serveur web
+// On attache un unique WebSocket à notre serveur web (infos radio + chat)
 wss = new WebSocketServer({ server })
+
+const historique = [];
+
 
 wss.on('connection', (ws) => {
     console.log(styleText(['bold', 'cyan'], '🔌 Un client Web est connecté pour les infos !'))
@@ -231,28 +234,7 @@ wss.on('connection', (ws) => {
         count: clients.size
     }))
 
-    ws.on('close', () => {
-        console.log(styleText(['bold', 'magenta'], '❌ Un client Web a fermé la page'))
-    })
-})
-
-// On charge la playlist puis on lance le son
-await loadPlaylist()
-await loadJingles();
-playTrack(currentTrackIndex)
-
-
-const ws_PORT = 7500;
-
-const chatWss = new WebSocketServer({ port: ws_PORT });
-const historique = [];
-console.log(`Le serveur WebSocket (Chat) est en cours d'exécution sur ws://localhost:${ws_PORT}`);
-
-// 2. On utilise chatWss pour écouter les connexions
-chatWss.on('connection', (ws) => {
-    console.log('Nouveau client connecté au chat');
-
-    // Envoyer l'historique au nouveau client
+    // Envoyer l'historique du chat au nouveau client
     historique.forEach((msg) => {
         ws.send(msg);
     });
@@ -286,10 +268,14 @@ chatWss.on('connection', (ws) => {
     });
 
     ws.on('close', () => {
-        console.log('Client déconnecté du chat');
-    });
-});
+        console.log(styleText(['bold', 'magenta'], '❌ Un client Web a fermé la page'))
+    })
+})
 
+// On charge la playlist puis on lance le son
+await loadPlaylist()
+await loadJingles();
+playTrack(currentTrackIndex)
 
 
 //Temporairze 
@@ -313,4 +299,3 @@ rl.on('line', (input) => {
         }
     }
 });
-
