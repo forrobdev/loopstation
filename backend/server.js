@@ -243,18 +243,73 @@ wss.on('connection', (ws) => {
         ws.send(msg);
     });
 
-    ws.on('message', (message) => {
+    ws.on('message', async (message) => { // Ajout de 'async' ici
         const texte = message.toString();
         console.log(`message reçu: ${texte}`);
 
-        // Sauvegarder le message dans l'historique
+        let data;
+        try {
+            data = JSON.parse(texte);
+        } catch (e) {
+            return; // Sécurité si on reçoit un message qui n'est pas du JSON
+        }
+
+        const messageContent = data.text ? data.text.trim() : "";
+
+        if (messageContent.startsWith("!gif ")) {
+            const keyword = messageContent.replace('!gif ', '').trim();
+            const GIPHY_API_KEY = "iywd34k9C4R7XgEZiCJ2FEIh4GKfU6d0";
+
+            try {
+                const response = await fetch(`https://api.giphy.com/v1/gifs/translate?api_key=${GIPHY_API_KEY}&s=${encodeURIComponent(keyword)}`);
+                const giphyData = await response.json();
+
+                if (giphyData.data && giphyData.data.images) {
+                    const gifUrl = giphyData.data.images.fixed_height.url;
+
+                    const botMessage = JSON.stringify({
+                        id: Date.now(),
+                        nickname: data.nickname,
+                        type: "gif",
+                        gifUrl: gifUrl,
+                        timestamp: Date.now()
+                    });
+
+
+                    historique.push(botMessage);
+
+
+                    wss.clients.forEach((client) => {
+                        if (client.readyState === WebSocket.OPEN) {
+                            client.send(botMessage);
+                        }
+                    });
+                } else {
+
+                    const errorMessage = JSON.stringify({
+                        id: Date.now(),
+                        nickname: "Bot",
+                        text: `Aucun GIF trouvé pour "${keyword}"`,
+                        timestamp: Date.now()
+                    });
+                    ws.send(errorMessage);
+                }
+            } catch (error) {
+                console.error("Erreur Giphy:", error);
+            }
+            
+            return; 
+        }
+
+
+        // --- 2. GESTION DES MESSAGES TEXTES CLASSIQUES ---
+
+        // Sauvegarder le message classique dans l'historique
         historique.push(texte);
 
-        const data = JSON.parse(texte);
         const estUnGif = data && data.type === 'gif';
         const contientLienInterdit = texte.includes("<") || texte.includes(">") || texte.includes("http") || texte.includes(".com");
 
-        // 3. On utilise bien ws.clients ici aussi
         wss.clients.forEach((client) => {
             if (client.readyState === WebSocket.OPEN) {
                 if (contientLienInterdit && !estUnGif) {
@@ -267,7 +322,6 @@ wss.on('connection', (ws) => {
                 } else {
                     client.send(texte);
                 }
-                
             }
         });
     });
