@@ -8,9 +8,10 @@
 
     let nickname = 'Anonyme';
     const buttonSound = new Audio(buttonSource);
+    const gifs = ref({});
     
 
-    async function chargerPseudo() {
+    async function LoadPseudo() {
         const reponse = await fetch('pseudos.json');
         const data = await reponse.json();
         nickname = data.pseudos[Math.floor(Math.random() * data.pseudos.length)];
@@ -22,7 +23,8 @@
 
     onMounted (async() => {
         if (localStorage.getItem("nickname") === null) {
-            await chargerPseudo()
+            await LoadPseudo()
+            await LoadGif()
         } else {
             nickname = localStorage.getItem("nickname")
             console.log("Nickname :" + nickname)
@@ -89,6 +91,22 @@
 
     function sendMessage() {
         const text = messageText.value;
+
+        if (text.startsWith("/gif")) {
+            const gifName = text.replace('/gif ', '').trim()
+            const gifUrl = gifs.value[gifName]
+
+            if (gifUrl) {
+                const data = JSON.stringify({
+                    nickname: nickname, 
+                    type: "/gif",
+                    gifUrl: gifs.value[gifName],
+                    timestamp : timestamp
+                })
+                socket.send(data);
+                messageText.value = '';
+            }
+        };
     
         if (text !== '' && text.length <= 1000 && socket) {
             buttonSound.currentTime = 0;
@@ -126,6 +144,12 @@
         })
     })
 
+    async function LoadGif() {
+        const reponse = await fetch('gifs.json')
+        const data = await reponse.json();
+        gifs.value = data.gifs;
+    }
+    
 
 </script>
 

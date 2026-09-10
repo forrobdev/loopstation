@@ -1,6 +1,5 @@
 <script setup>
     import {ref, onMounted, nextTick} from 'vue';
-    import { PhPlay, PhPause, PhChatsCircle, PhHeart } from "@phosphor-icons/vue";
     import {gsap} from 'gsap';
     import buttonSource from "../assets/button.mp3"
     import { PhHeart } from "@phosphor-icons/vue";
