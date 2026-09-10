@@ -9,11 +9,15 @@ import { WebSocketServer, WebSocket } from 'ws';
 //Temporairez
 import readline from 'node:readline';
 
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
+}
+
 const app = express()
 const PORT = 3000
 
 let playlist = []
-let currentTrackIndex = 0
+let currentTrackIndex = getRandomInt(16)
 let ffmpegProcess = null
 const clients = new Set()
 let tracksInfos = []
