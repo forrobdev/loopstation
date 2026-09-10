@@ -110,6 +110,36 @@
         "author" : "Aitch",
         "name" : "Ring My Bell",
         "cover" : "https://i.scdn.co/image/ab67616d0000b273e787b37d558872f006169a87"
+    },
+    {
+        "track_id" : 18,
+        "author" : "SUBSURFACE",
+        "name" : "You Got Me Singin' Like",
+        "cover" : "https://i.scdn.co/image/ab67616d0000b273345f96f9ca03cb8bfc9d9f94"
+    },
+    {
+        "track_id" : 19,
+        "author" : "Hugel, SOLTO",
+        "name" : "Jamaican (Bam Bam)",
+        "cover" : "https://cdn-images.dzcdn.net/images/cover/48508c979e3b80e675c0f90ee052a43d/0x1900-000000-80-0-0.jpg"
+    },
+    {
+        "track_id" : 20,
+        "author" : "Hugel, SOLTO",
+        "name" : "Jamaican (Bam Bam)",
+        "cover" : "https://cdn-images.dzcdn.net/images/cover/48508c979e3b80e675c0f90ee052a43d/0x1900-000000-80-0-0.jpg"
+    },
+    {
+        "track_id" : 21,
+        "author" : "ZARG",
+        "name" : "Like This",
+        "cover" : "https://i1.sndcdn.com/artworks-I4FgmXFU1j7G1Dxn-zC5e0Q-t500x500.jpg"
+    },
+    {
+        "track_id" : 22,
+        "author" : "Keinemusik",
+        "name" : "Say What",
+        "cover" : "https://i.scdn.co/image/ab67616d0000b2738e09b9e428468678d05cfb5f"
     }
     
     

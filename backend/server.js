@@ -17,7 +17,7 @@ const app = express()
 const PORT = 3000
 
 let playlist = []
-let currentTrackIndex = getRandomInt(16)
+let currentTrackIndex = getRandomInt(21)
 let ffmpegProcess = null
 const clients = new Set()
 let tracksInfos = []
