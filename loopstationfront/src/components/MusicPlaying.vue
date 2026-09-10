@@ -2,6 +2,10 @@
 
 import { inject, ref, onMounted} from "vue";
 import { gsap } from "gsap";
+import { playerManager } from "../stores/playerManager"
+
+
+const playerStore = playerManager()
 
 
 const ws = inject("ws")
@@ -15,6 +19,14 @@ ws.addEventListener("message", (event) => {
     if (message.type === 'track') {
         console.log("Nouvelle musique :", message.data);
         animNextMusic(message.data);
+        document.title = message.data.name + " - " +  message.data.author + " on Loop Station";
+        playerStore.currentMusic = {
+            name : message.data.name,
+            author : message.data.author,
+            cover : message.data.cover,
+        }
+        console.log("Nouvelle musique enregistrée dans le PlayerStore")
+        console.log(playerStore.currentMusic)
     } 
 });
 

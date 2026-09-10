@@ -272,7 +272,7 @@ chatWss.on('connection', (ws) => {
                         id : 0,
                         nickname : "Bot",
                         text : "Impossible d'envoyer ce message !",
-                        time : 1111111
+                        timestamp : Date.now()
                     }));
                 } else {
                     client.send(texte);

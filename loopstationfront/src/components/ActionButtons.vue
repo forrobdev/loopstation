@@ -6,6 +6,9 @@ import { PhPlay, PhPause, PhChatsCircle, PhHeart } from "@phosphor-icons/vue";
 import easterEgg4Source from "../assets/easteregg4.mp3"
 import { gsap } from "gsap"
 import { likeManager } from "../stores/counter"
+import { chatManager } from "../stores/chatManager"
+import { playerManager } from "../stores/playerManager"
+
 
 
 
@@ -14,6 +17,10 @@ const easterEgg4 = new Audio(easterEgg4Source)
 const isPlay = ref(true)
 
 const likesStore = likeManager()
+
+const chatStore = chatManager()
+
+const playerStore = playerManager()
 
 // const currentIcon = ref(playIcon)
 const emits = defineEmits(["playMusic","pauseMusic", "refreshLikedMusic"])
@@ -59,28 +66,6 @@ function playVoice(voiceAudio) {
 
 let clickCount = 0
 
-function isLiked(musicName, musicAuthor) {
-    const allLikes = JSON.parse(localStorage.getItem("likes")) ?? []
-
-
-    liked.value = allLikes.some(music => 
-        music.name === musicName && 
-        music.author === musicAuthor
-    )
-}
-
-const ws = inject("ws")
-
-ws.addEventListener("message", (event) => {
-    const message = JSON.parse(event.data);
-    
-    // Si c'est une nouvelle musique
-    if (message.type === 'track') {
-        isLiked(message.data.name,message.data.author)
-        console.log("Nouvelle musique la team !")
-    } 
-});
-
 function likeClick() {
 
     clickCount++
@@ -92,15 +77,13 @@ function likeClick() {
 
     console.log("Clickcount :" + clickCount)
 
-    buttonSound.play()
-    liked.value = !liked.value
 
 
-    const musicName = document.querySelector("#name").innerHTML
-    const musicAuthor = document.querySelector("#author").innerHTML
-    const musicCover = document.querySelector("#cover").src
+    const musicName = playerStore.currentMusic.name
+    const musicAuthor = playerStore.currentMusic.author
+    const musicCover = playerStore.currentMusic.cover
 
-    if (liked.value) {
+    if (!likesStore.isCurrentMusicLiked) {
        likesStore.like(musicName,musicAuthor,musicCover)
     } else {
         likesStore.dislike(musicName,musicAuthor,musicCover)
@@ -117,34 +100,11 @@ setInterval(() => {
 }, 3000)
 
 
-const liked = ref(false)
-let chatOpened = false
 
 function toggleChat() {
-
     buttonSound.play()
 
-
-    if (chatOpened) {
-        gsap.to("#chatZone", {
-            duration : 0.3,
-            ease : "power4.out",
-            opacity : 0,
-            y : 200,
-        })
-
-        chatOpened = false
-    } else {
-        gsap.to("#chatZone", {
-            duration : 0.3,
-            ease : "power4.out",
-            opacity : 1,
-            y : 0,
-        })
-
-        chatOpened = true
-    }
-
+    chatStore.chatOpened = !chatStore.chatOpened
 }
 
 </script>
@@ -155,13 +115,13 @@ function toggleChat() {
 <div id="actionButtons">
 
     <div @click="likeClick" id="like" class="action white">
-        <PhHeart v-if="liked" :size="22" weight="fill" />
-        <PhHeart v-if="!liked" :size="22" />
+        <PhHeart v-if="likesStore.isCurrentMusicLiked" :size="22" weight="fill" />
+        <PhHeart v-else="likesStore.isCurrentMusicLiked" :size="22" />
     </div>
 
     <div @click="playClicked" id="pause" class="action white">
         <PhPlay v-if="isPlay" :size="32" weight="fill" />
-        <PhPause v-if="!isPlay" :size="32" weight="fill" />
+        <PhPause v-else="isPlay" :size="32" weight="fill" />
     </div>
 
     <div @click="toggleChat" id="chat" class="action white">
