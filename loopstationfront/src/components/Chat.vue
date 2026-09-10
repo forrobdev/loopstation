@@ -8,7 +8,7 @@
     const chatStore = chatManager()
 
 
-    let nickname = 'Anonyme';
+    let nickname = ref('Anonyme');
     const buttonSound = new Audio(buttonSource);
 
     
@@ -16,11 +16,11 @@
     async function LoadPseudo() {
         const reponse = await fetch('/pseudos.json');
         const data = await reponse.json();
-        nickname = data.pseudos[Math.floor(Math.random() * data.pseudos.length)];
+        nickname.value = data.pseudos[Math.floor(Math.random() * data.pseudos.length)];
 
-        console.log("Nickname :" + nickname)
+        console.log("Nickname :" + nickname.value)
 
-        localStorage.setItem("nickname", nickname)
+        localStorage.setItem("nickname", nickname.value)
     }
 
     const ws = inject("ws")
@@ -28,6 +28,15 @@
     console.log("On a injecté et ça a donnée ça :", ws)
 
     onMounted (async() => {
+
+        const savedNickname = localStorage.getItem("nickname");
+    
+        if (savedNickname === null) {
+            await LoadPseudo();
+        } else {
+            nickname.value = savedNickname;
+            console.log("Nickname récupéré du storage :", nickname.value);
+        }
 
         ws.addEventListener('open', () => {
             console.log('Connecté au serveur Websocket');
@@ -44,6 +53,12 @@
 
     function receiveMessage(event) {
         const data  = JSON.parse(event.data);
+
+        if (data.type === 'track' || data.type === 'listeners') {
+            return; 
+        }
+
+        
   
         const messageDate = new Date(data.timestamp);
         const hours = messageDate.getHours().toString().padStart(2, '0');
@@ -86,7 +101,7 @@
             buttonSound.currentTime = 0;
             buttonSound.play();
     
-            const data = JSON.stringify({nickname: nickname, text: text, timestamp: timestamp })
+            const data = JSON.stringify({nickname: nickname.value, text: text, timestamp: timestamp })
             ws.send(data);
             messageText.value = '';
         }
