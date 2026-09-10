@@ -181,7 +181,7 @@ function toggleChat() {
     position: absolute;
     bottom : 40px;
 
-    z-index: 2;
+    z-index: 4;
     width: 100%;
     height: fit-content;
 }

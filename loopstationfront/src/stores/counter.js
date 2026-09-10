@@ -23,7 +23,8 @@ export const likeManager = defineStore('likeManager', () => {
     likesArray.value.push({
       name : musicName,
       author : musicAuthor,
-      cover : musicCover
+      cover : musicCover,
+      date: Date.now()
     })
 
     localStorage.setItem("likes",JSON.stringify(likesArray.value))

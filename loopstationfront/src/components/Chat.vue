@@ -235,7 +235,7 @@
     position: fixed;
     bottom: 150px;
 
-    z-index: -1;
+    z-index: 2;
 }
 
 #chatBox {
