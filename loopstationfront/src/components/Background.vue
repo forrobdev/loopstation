@@ -65,7 +65,7 @@ function initVisualizer() {
     };
 
     loadRandomPreset(0);
-    setInterval(() => loadRandomPreset(2.7), 15000);
+    setInterval(() => loadRandomPreset(2.7), 30000);
 
     function render() {
         requestAnimationFrame(render);

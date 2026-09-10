@@ -1,9 +1,14 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-// import { W } from 'vue-router/dist/index-D7ja2BKs.js';
+import { playerManager } from "../stores/playerManager"
+import buttonSource from "../assets/button.mp3"
+    
+const buttonSound = new Audio(buttonSource)
+
 
 export const likeManager = defineStore('likeManager', () => {
   const likesArray = ref(["test","test2"])
+
   function loadLikesSongs(){ 
     const data = localStorage.getItem('likes');
 
@@ -13,6 +18,7 @@ export const likeManager = defineStore('likeManager', () => {
         likesArray.value = [];   
     }
   }
+
   function like(musicName,musicAuthor,musicCover) {
     likesArray.value.push({
       name : musicName,
@@ -22,10 +28,13 @@ export const likeManager = defineStore('likeManager', () => {
 
     localStorage.setItem("likes",JSON.stringify(likesArray.value))
 
+    buttonSound.play()
+    
     console.log("Tous les likes :")
     console.log(likesArray.value)
     console.log("-----------------------")
   }
+
   function dislike(musicName,musicAuthor) {
     const index = likesArray.value.findIndex(music => 
       music.name === musicName && 
@@ -36,13 +45,27 @@ export const likeManager = defineStore('likeManager', () => {
 
     localStorage.setItem("likes",JSON.stringify(likesArray.value))
 
+    buttonSound.play()
+
     console.log("Tous les likes :")
     console.log(likesArray.value)
     console.log("-----------------------")
   }
 
+  const playerStore = playerManager()
+
+  const isCurrentMusicLiked = computed(() => {
+    const currentMusic = playerStore.currentMusic
+    console.log("likesArray :", likesArray.value)
+    console.log("currentMusic :", currentMusic)
+    return likesArray.value.some(music => 
+      music.name === currentMusic.name && 
+      music.author === currentMusic.author
+    );
+  });
+
   loadLikesSongs()
 
-  return { likesArray, loadLikesSongs, like, dislike }
+  return { likesArray, loadLikesSongs, like, dislike, isCurrentMusicLiked }
 })
 

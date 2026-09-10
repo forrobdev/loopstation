@@ -3,7 +3,6 @@
     import { PhPlay, PhPause, PhChatsCircle, PhHeart } from "@phosphor-icons/vue";
     import {gsap} from 'gsap';
     import buttonSource from "../assets/button.mp3"
-    import { PhHeart } from "@phosphor-icons/vue";
     import { likeManager } from "../stores/counter"
 
 
@@ -42,20 +41,20 @@
         })
     });
 
-    let likesOpened = false
+    let likesOpened = ref(false)
 
     function openLikes() {
 
         buttonSound.play()
 
-        if (likesOpened) {
+        if (likesOpened.value) {
             gsap.to("#likesZone", {
                 duration : 0.3,
                 ease : "power4.out",
                 y : 280
             })
 
-            likesOpened = !likesOpened
+            likesOpened.value = !likesOpened.value
         } else {
             gsap.to("#likesZone", {
                 duration : 0.3,
@@ -63,7 +62,7 @@
                 y : 0
             })
 
-            likesOpened = !likesOpened
+            likesOpened.value = !likesOpened.value
         }
         
     }
@@ -96,6 +95,32 @@
     //         x : -200
     //     })
     // }
+
+    function addMusicAnim(el, done) {
+        gsap.fromTo(el, {
+            opacity: 0, x: -200
+        }, {
+            duration : 0.3,
+            ease : "power4.out",
+            opacity : 1,
+            x : 0,
+            onComplete : done
+        })
+        
+    }
+
+    function deletedMusicAnim(el, done) {
+        gsap.fromTo(el, {
+            opacity: 1, x: 0
+        }, {
+            duration : 0.3,
+            ease : "power4.out",
+            opacity : 0,
+            x : 200,
+            onComplete : done
+        })
+        
+    }
         
 </script>
 
@@ -107,17 +132,26 @@
             <p>My favorite songs</p>
         </div>
 
-        <div id="allLikedMusic">
-            <div v-for="song in likesStore.likesArray" :key="song.name + song.author" class="likedMusic white">
-                <img :src="song.cover" :alt="song.name" class="likedCover">
-                <div class="likedRight">
-                    <p class="likedName">{{ song.name }}</p>
-                    <p class="likedAuthor">{{ song.author }}</p>
+        
+        <div id="allLikedMusic" v-if="likesOpened">
+
+            <TransitionGroup @enter="addMusicAnim" @leave="deletedMusicAnim" :css="false">
+
+                <div v-for="song in likesStore.likesArray" :key="song.name + song.author" class="likedMusic white">
+                    <img :src="song.cover" :alt="song.name" class="likedCover">
+                    <div class="likedRight">
+                        <p class="likedName">{{ song.name }}</p>
+                        <p class="likedAuthor">{{ song.author }}</p>
+                    </div>
+
+                    <PhHeart @click="likesStore.dislike(song.name, song.author)" id="likeIcon" :size="22" weight="fill" />
                 </div>
 
-                <PhHeart @click="likesStore.dislike(song.name, song.author)" id="likeIcon" :size="22" weight="fill" />
-            </div>
+            </TransitionGroup>
+
         </div>
+
+        
 
         
 
@@ -143,7 +177,7 @@
     height: 400px;
     width: 400px;
     z-index: 20;
-    gap: 35px;
+    gap: 10px;
 }
 
 #allLikedMusic {
@@ -154,7 +188,7 @@
     height: 400px;
     width: 400px;
     overflow: scroll;
-    padding: 80px 0;
+    padding: 30px 0;
 }
 
 

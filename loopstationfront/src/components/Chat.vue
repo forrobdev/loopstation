@@ -3,7 +3,9 @@
     import {gsap} from 'gsap';
     import buttonSource from "../assets/button.mp3"
     import { PhPaperPlaneTilt } from "@phosphor-icons/vue";
+    import { chatManager } from "../stores/chatManager"
 
+    const chatStore = chatManager()
 
 
     let nickname = 'Anonyme';
@@ -37,20 +39,6 @@
         socket.addEventListener('message', receiveMessage);
     })
     
-
-    let ChatOpen = ref(true); 
-
-    function ToggleChat() {
-        buttonSound.play()
-
-        if (ChatOpen.value) {
-            gsap.to("#chatZone", { duration: 0.3, ease: "power4.out", opacity: 0, y: 200 });
-            ChatOpen.value = false;
-        } else {
-            gsap.to("#chatZone", { duration : 0.3, ease : "power4.out", opacity : 1, y : 0});
-            ChatOpen.value = true;
-        }
-    }
 
     let socket = null;
     const chatBox = ref(null);
@@ -117,21 +105,37 @@
         }
     });
 
-    onMounted(() => {
-        gsap.to("#chatZone", {
-            duration : 0.3,
-            ease : "power4.out",
-            opacity : 0,
-            y : 200,
-        })
-    })
+    function openChatAnim(el, done) {
+        gsap.fromTo(el, 
+            { opacity: 0, y: 200 },
+            {
+                duration: 0.3,
+                ease: "power4.out",
+                opacity: 1,
+                y: 0,
+                onComplete: done
+            }
+        );
+    }
+
+    function closeChatAnim(el, done) {
+        gsap.to(el, {
+          duration : 0.3,
+          ease : "power4.out",
+          opacity : 0,
+          y : 200,
+          onComplete: done
+      })
+    }
 
 
 </script>
 
 <template>
+
+    <Transition @enter="openChatAnim" @leave="closeChatAnim" :css="false">
     
-    <div id="chatZone">
+    <div id="chatZone" v-if="chatStore.chatOpened">
         <div id="chatBox" ref="chatBox" class="white">
             <div id="messages">
                 <p v-for="msg in messages" :key="msg.id">
@@ -151,7 +155,9 @@
         
     </div>
 
-    <div id="Chat" @click="ToggleChat"></div>
+    </Transition>
+
+    <!-- <div id="Chat" @click="ToggleChat"></div> -->
     
 
 </template>
