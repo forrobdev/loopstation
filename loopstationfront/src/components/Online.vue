@@ -66,11 +66,11 @@ function animateCard() {
 
     console.log("ClickCount :" + clickCount)
 
-    if (clickCount == 10) {
+    if (clickCount === 10) {
         playVoice(easterEgg1)
-    } else if (clickCount == 20) {
+    } else if (clickCount === 20) {
         playVoice(easterEgg2)
-    } else if (clickCount == 100) {
+    } else if (clickCount === 100) {
         playVoice(easterEgg3)
     }
 

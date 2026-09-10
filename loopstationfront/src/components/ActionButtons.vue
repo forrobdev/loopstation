@@ -1,8 +1,6 @@
 <script setup>
 
 import { onMounted, ref, computed, inject } from 'vue'
-import playIcon from "../assets/play.png"
-import pauseIcon from "../assets/pause.png"
 import buttonSource from "../assets/button.mp3"
 import { PhPlay, PhPause, PhChatsCircle, PhHeart } from "@phosphor-icons/vue";
 import easterEgg4Source from "../assets/easteregg4.mp3"
@@ -12,9 +10,10 @@ import { gsap } from "gsap"
 
 const buttonSound = new Audio(buttonSource)
 const easterEgg4 = new Audio(easterEgg4Source)
+const isPlay = ref(true)
 
 
-const currentIcon = ref(playIcon)
+// const currentIcon = ref(playIcon)
 const emits = defineEmits(["playMusic","pauseMusic"])
 
 function playClicked() {
@@ -22,18 +21,20 @@ function playClicked() {
     console.log("Salut t'as cliqué")
     buttonSound.play()
     
-    if (currentIcon.value == pauseIcon) {
+    if (!isPlay.value) {
         console.log("On veut mettre pause !!")
-        currentIcon.value = playIcon
+        isPlay.value = true
         
         emits("pauseMusic")
     } else {
-        currentIcon.value = pauseIcon
+        isPlay.value = false
         emits("playMusic")
     }
+
+    console.log("isPLay :" + isPlay.value)
 }
 
-const isPlay = computed(() => currentIcon.value === playIcon)
+
 
 function playVoice(voiceAudio) {
 
@@ -82,7 +83,7 @@ function like() {
 
     clickCount++
 
-    if (clickCount == 10) {
+    if (clickCount === 10) {
         clickCount = 0
         playVoice(easterEgg4)
     }

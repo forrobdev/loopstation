@@ -21,7 +21,7 @@
     }
 
     onMounted (async() => {
-        if (localStorage.getItem("nickname") == null) {
+        if (localStorage.getItem("nickname") === null) {
             await chargerPseudo()
         } else {
             nickname = localStorage.getItem("nickname")
@@ -135,9 +135,11 @@
         <div id="chatBox" ref="chatBox" class="white">
             <div id="messages">
                 <p v-for="msg in messages" :key="msg.id">
-                    <span style="color: #FFBF00;">{{ msg.nickname }}:</span>
-                    {{ msg.text }}
+                    <span style="color: #FFBF00;">{{ msg.nickname }}, </span>
                     <span style="opacity: 0.5; font-size: 0.8em;">{{ msg.time }}</span>
+                    <br>
+                    {{ msg.text }}
+                    
                 </p>
             </div>
         </div>

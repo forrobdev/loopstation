@@ -12,7 +12,7 @@ async function chargerPseudo() {
     localStorage.setItem("pseudo", pseudo)
 }
 
-if (localStorage.getItem("pseudo") == null) {
+if (localStorage.getItem("pseudo") === null) {
     chargerPseudo()
 } else {
     pseudo = localStorage.getItem("pseudo")
@@ -176,7 +176,7 @@ like.addEventListener("click", () => {
     buttonSound.play()
     const stateImg = like.querySelector("img").getAttribute("src")
     
-    if (stateImg == "assets/like.png") {
+    if (stateImg === "assets/like.png") {
         like.querySelector("img").setAttribute("src","assets/liked.png")
     } else {
         like.querySelector("img").setAttribute("src","assets/like.png")
@@ -228,7 +228,7 @@ pause.addEventListener("click", () => {
     buttonSound.play()
     const stateImg = pause.querySelector("img").getAttribute("src")
     
-    if (stateImg == "assets/pause.png") {
+    if (stateImg === "assets/pause.png") {
         pause.querySelector("img").setAttribute("src","assets/play.png")
         audio.pause();
     } else {

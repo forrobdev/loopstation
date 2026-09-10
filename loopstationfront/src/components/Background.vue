@@ -28,14 +28,38 @@ function initVisualizer() {
     visualizer = createVis(audioContext, canvas, {
         width: canvas.width,
         height: canvas.height,
-        pixelRatio: 1
+        pixelRatio: window.devicePixelRatio || 1
     });
+
+    visualizer.connectAudio(sourceNode);
 
     const presetsObj = butterchurnPresets.default ? butterchurnPresets.default.getPresets() : butterchurnPresets.getPresets();
     const presetNames = Object.keys(presetsObj);
 
+    const favoritePresets = [
+        "_Mig_085",
+        "$$$ Royal - Mashup (220)",
+        "An AdamFX n Martin Infusion 2 flexi - Why The Sky Looks Diffrent Today - AdamFx n Martin Infusion - Tack Tile Disfunction B",
+        "cope + martin - mother-of-pearl",
+        "flexi + amandio c - organic12-3d-2.milk",
+        "Flexi + stahlregen - jelly showoff parade",
+        "Geiss - Cauldron - painterly 2 (saturation remix)",
+        "martin - castle in the air",
+        "Martin - charisma",
+        "Martin - liquid arrows",
+        "martin [shadow harlequins shape code] - fata morgana",
+        "ORB - Waaa",
+        "Rovastar - Oozing Resistance",
+        "Unchained - Rewop",
+        "Unchained - Unified Drag 2",
+        "yin - 191 - Temporal singularities"
+    ];
+
+    console.log("Presets : " + presetNames)
+
     const loadRandomPreset = (transitionTime = 0) => {
-        const randomName = presetNames[Math.floor(Math.random() * presetNames.length)];
+        const randomName = favoritePresets[Math.floor(Math.random() * favoritePresets.length)];
+        console.log("Voici le random que j'ai choisi : " + randomName)
         visualizer.loadPreset(presetsObj[randomName], transitionTime);
     };
 
