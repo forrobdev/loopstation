@@ -15,22 +15,22 @@
         }
     };
 
-    function unLikesSongs (song) {
-        let indexRemove = -1;
+    // function unLikesSongs (song) {
+    //     let indexRemove = -1;
 
 
-        for(let i = 0 ; i < likesSongs.value.length  ; i = i + 1 ) {
-            if (likesSongs.value[i].name === song.name && likesSongs.value[i].author === song.author) {
-                indexRemove = i;
-            };
-        };
+    //     for(let i = 0 ; i < likesSongs.value.length  ; i = i + 1 ) {
+    //         if (likesSongs.value[i].name === song.name && likesSongs.value[i].author === song.author) {
+    //             indexRemove = i;
+    //         };
+    //     };
 
-        if(indexRemove !== -1) {
-            likesSongs.value.splice(indexRemove, 1);
-            localStorage.setItem("likes", JSON.stringify(likesSongs.value))
-        };
+    //     if(indexRemove !== -1) {
+    //         likesSongs.value.splice(indexRemove, 1);
+    //         localStorage.setItem("likes", JSON.stringify(likesSongs.value))
+    //     };
 
-    };
+    // };
 
 
     onMounted (() => {
@@ -57,9 +57,9 @@
                     <div class="infos">
                         <span class="name">{{ song.name }}</span>
                         <span class="author">{{ song.author }}</span>
-                        <div @click = "unLikesSongs(song)" class="action white unlike">
+                        <!-- <div @click = "unLikesSongs(song)" class="action white unlike">
                                 <PhHeart :size="20" weight="fill" />
-                        </div>
+                        </div> -->
                     </div>
                 </li>
             </ul>
