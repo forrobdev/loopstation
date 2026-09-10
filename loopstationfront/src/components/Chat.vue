@@ -1,5 +1,5 @@
 <script setup>
-    import {ref, onMounted, nextTick} from 'vue';
+    import {ref, onMounted, nextTick, inject} from 'vue';
     import {gsap} from 'gsap';
     import buttonSource from "../assets/button.mp3"
     import { PhPaperPlaneTilt } from "@phosphor-icons/vue";
@@ -22,6 +22,10 @@
         localStorage.setItem("nickname", nickname)
     }
 
+    const ws = inject("ws")
+
+    console.log("On a injecté et ça a donnée ça :", ws)
+
     onMounted (async() => {
         if (localStorage.getItem("nickname") === null) {
             await chargerPseudo()
@@ -30,17 +34,15 @@
             console.log("Nickname :" + nickname)
         }
 
-        socket = new WebSocket(import.meta.env.VITE_API_KEY);
-
-        socket.addEventListener('open', () => {
-            console.log('Connecté au serveur WebSocket');
+        ws.addEventListener('open', () => {
+            console.log('Connecté au serveur Websocket');
         });
 
-        socket.addEventListener('message', receiveMessage);
+        ws.addEventListener('message', receiveMessage);
     })
     
 
-    let socket = null;
+
     const chatBox = ref(null);
     const messages = ref([]);
     const messageText = ref('');
@@ -64,7 +66,10 @@
 
         nextTick (() => {
             if (chatBox.value) {
-                chatBox.value.scrollTop = chatBox.value.scrollHeight;
+                chatBox.value.scrollTo({
+                    top: chatBox.value.scrollHeight,
+                    behavior: 'smooth'
+                });
             }
         });
 
@@ -78,13 +83,15 @@
     function sendMessage() {
         const text = messageText.value;
     
-        if (text !== '' && text.length <= 1000 && socket) {
+        if (text !== '' && text.length <= 1000 && ws) {
             buttonSound.currentTime = 0;
             buttonSound.play();
     
             const timestamp = Date.now();
             const data = JSON.stringify({nickname : nickname, text: text, timestamp: timestamp })
-            socket.send(data);
+            console.log("WS donne", ws)
+            console.log("Data donne", data)
+            ws.send(data);
             messageText.value = '';
         }
     }
@@ -128,6 +135,29 @@
       })
     }
 
+    function newMessageAnim(el, done) {
+        gsap.fromTo(el, 
+            { opacity: 0, y: 200 },
+            {
+                duration: 0.3,
+                ease: "power4.out",
+                opacity: 1,
+                y: 0,
+                onComplete: done
+            }
+        );
+
+        buttonSound.play()
+    }
+
+    function chooseColor(nickname) {
+        if (nickname === "Bot") {
+            return "color: #5ab2fa;"    
+        } else {
+            return "color: #FFBF00;"
+        }
+    }
+
 
 </script>
 
@@ -138,13 +168,15 @@
     <div id="chatZone" v-if="chatStore.chatOpened">
         <div id="chatBox" ref="chatBox" class="white">
             <div id="messages">
+                <TransitionGroup @enter="newMessageAnim" :css="false">
                 <p v-for="msg in messages" :key="msg.id">
-                    <span style="color: #FFBF00;">{{ msg.nickname }}, </span>
+                    <span :style="chooseColor(msg.nickname)">{{ msg.nickname }}, </span>
                     <span style="opacity: 0.5; font-size: 0.8em;">{{ msg.time }}</span>
                     <br>
                     {{ msg.text }}
                     
                 </p>
+                </TransitionGroup>
             </div>
         </div>
 
@@ -156,9 +188,6 @@
     </div>
 
     </Transition>
-
-    <!-- <div id="Chat" @click="ToggleChat"></div> -->
-    
 
 </template>
 
@@ -213,6 +242,12 @@
     justify-content: center;
     align-items: center;
     padding: 10px 15px;
+}
+
+@media (max-width: 750px) {
+    #chatZone {
+        bottom: 200px;
+    }
 }
 
 

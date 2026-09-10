@@ -13,26 +13,6 @@
     const likesStore = likeManager()
 
 
-
-
-    // function unLikesSongs (song) {
-    //     let indexRemove = -1;
-
-
-    //     for(let i = 0 ; i < likesSongs.value.length  ; i = i + 1 ) {
-    //         if (likesSongs.value[i].name === song.name && likesSongs.value[i].author === song.author) {
-    //             indexRemove = i;
-    //         };
-    //     };
-
-    //     if(indexRemove !== -1) {
-    //         likesSongs.value.splice(indexRemove, 1);
-    //         localStorage.setItem("likes", JSON.stringify(likesSongs.value))
-    //     };
-
-    // };
-
-
     onMounted (() => {
         gsap.to("#likesZone", {
             duration : 0,
@@ -67,34 +47,6 @@
         
     }
 
-
-
-    // function dislike(musicName,musicAuthor, event) {
-
-    //     buttonSound.play()
-
-    //     const allLikes = JSON.parse(localStorage.getItem("likes")) ?? []
-
-    //     const index = allLikes.findIndex(music => 
-    //         music.name === musicName && 
-    //         music.author === musicAuthor
-    //     )
-
-    //     allLikes.splice(index, 1)
-
-    //     localStorage.setItem("likes",JSON.stringify(allLikes))
-
-    //     console.log("Tous les likes :")
-    //     console.log(allLikes)
-    //     console.log("-----------------------")
-
-    //     gsap.to(event.currentTarget.closest('.likedMusic'), {
-    //         duration : 0.3,
-    //         ease : "power4.out",
-    //         opacity : 0,
-    //         x : -200
-    //     })
-    // }
 
     function addMusicAnim(el, done) {
         gsap.fromTo(el, {
@@ -238,5 +190,18 @@
     height: 30px;
     height: fit-content;
 }
+
+@media (max-width: 750px) {
+    #likesZone {
+        left: 50px;
+    }
+
+    #allLikedMusic {
+        background-color: rgba(0, 0, 0, 0.489);
+        border-radius: 28px 28px 0 0;
+    }
+}
+
+
 
 </style>
