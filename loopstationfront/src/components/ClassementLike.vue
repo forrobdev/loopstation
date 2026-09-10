@@ -1,107 +1,177 @@
 <script setup>
     import {ref, onMounted, nextTick} from 'vue';
     import {gsap} from 'gsap';
+    import buttonSource from "../assets/button.mp3"
+    import { PhHeart } from "@phosphor-icons/vue";
+    import { likeManager } from "../stores/counter"
+
+
+
+
+    const buttonSound = new Audio(buttonSource)
     
-    const likesSongs = ref([]);
+    const likesStore = likeManager()
 
-    function loadLikesSongs (){ 
-        const data = localStorage.getItem('likes');
 
-        if (data) {
-            likesSongs.value = JSON.parse(data) 
-        } else {
-            likesSongs.value = [];   
-        }
-    };
+
 
 
     onMounted (() => {
-        loadLikesSongs();
+        gsap.to("#likesZone", {
+            duration : 0,
+            ease : "power4.out",
+            y : 280
+        })
     });
-    
+
+    let likesOpened = false
+
+    function openLikes() {
+
+        buttonSound.play()
+
+        if (likesOpened) {
+            gsap.to("#likesZone", {
+                duration : 0.3,
+                ease : "power4.out",
+                y : 280
+            })
+
+            likesOpened = !likesOpened
+        } else {
+            gsap.to("#likesZone", {
+                duration : 0.3,
+                ease : "power4.out",
+                y : 0
+            })
+
+            likesOpened = !likesOpened
+        }
+        
+    }
+
+
+
+    // function dislike(musicName,musicAuthor, event) {
+
+    //     buttonSound.play()
+
+    //     const allLikes = JSON.parse(localStorage.getItem("likes")) ?? []
+
+    //     const index = allLikes.findIndex(music => 
+    //         music.name === musicName && 
+    //         music.author === musicAuthor
+    //     )
+
+    //     allLikes.splice(index, 1)
+
+    //     localStorage.setItem("likes",JSON.stringify(allLikes))
+
+    //     console.log("Tous les likes :")
+    //     console.log(allLikes)
+    //     console.log("-----------------------")
+
+    //     gsap.to(event.currentTarget.closest('.likedMusic'), {
+    //         duration : 0.3,
+    //         ease : "power4.out",
+    //         opacity : 0,
+    //         x : -200
+    //     })
+    // }
+        
 </script>
 
 
 <template>
+    <div id="likesZone">
 
-    <div id="ClassementZone">
-        <div id="ClassementBox">
-            <h1>Titres Likées</h1>
-
-            <div v-if="likesSongs.length === 0" class="empty">
-                Aucune Music Likées
-            </div>
-
-
-            <ul v-else>
-                <li v-for="song in likesSongs" :key=" song.name + song.author">
-                    <img :src="song.cover" :alt="song.name" class="cover">
-                    <div class="infos">
-                        <span class="name">{{ song.name }}</span>
-                        <span class="author">{{ song.author }}</span>
-                    </div>
-                </li>
-            </ul>
+        <div @click="openLikes" class="white title" v-if="likesStore.likesArray.length > 0">
+            <p>My favorite songs</p>
         </div>
+
+        <div id="allLikedMusic">
+            <div v-for="song in likesStore.likesArray" :key="song.name + song.author" class="likedMusic white">
+                <img :src="song.cover" :alt="song.name" class="likedCover">
+                <div class="likedRight">
+                    <p class="likedName">{{ song.name }}</p>
+                    <p class="likedAuthor">{{ song.author }}</p>
+                </div>
+
+                <PhHeart @click="likesStore.dislike(song.name, song.author)" id="likeIcon" :size="22" weight="fill" />
+            </div>
+        </div>
+
+        
+
     </div>
-
-
 </template>
 
 <style>
 
+.title {
+    cursor: pointer;
+    padding: 10px 20px;
+    border-radius: 100px;
+}
 
-
-#ClassementZone {
-    width: 100%;
-    height: fit-content;
+#likesZone {
+    padding-top: 50px;
+    position: fixed;
+    left: 20px;
+    bottom: 0px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-
-    gap : 10px;
-
-    position: fixed;
-    bottom: 150px;
-
-    /* z-index: 1; */
-
-
+    height: 400px;
+    width: 400px;
+    z-index: 20;
+    gap: 35px;
 }
 
-#ClassementBox {
+#allLikedMusic {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    height: 400px;
+    width: 400px;
+    overflow: scroll;
+    padding: 80px 0;
+}
+
+
+
+.likedMusic {
+    display: flex;
+    justify-content: left;
+    align-items: center;
     width: 280px;
-    height: 350px;
-    overflow-y: auto;
-    background-color: #ffffff;
+    height: 130px;
     border-radius: 18px;
-    padding: 15px 20px;
+    padding: 15px;
+    gap: 20px;
 }
 
-.empty {
-
+.likedCover {
+    height: 100px;
+    width: 100px;
+    border-radius: 8px;
 }
 
-.cover {
-
-
+.likedName {
+    color: #FFBF00;
+    font-size: 20px;
 }
 
-.infos {
-
-
+.likedAuthor {
+    font-size: 16px;
 }
 
-.name {
-
-
-}
-
-.author {
-
-
-
+#likeIcon {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    cursor: pointer;
 }
 
 

@@ -7,6 +7,7 @@ import welcomeSource from "../assets/welcome.mp3"
 import { gsap } from "gsap"
 
 
+
 const audioRef = ref(null);
 const canvasRef = ref(null);
 let visualizerInit = false;

@@ -5,6 +5,7 @@ import buttonSource from "../assets/button.mp3"
 import { PhPlay, PhPause, PhChatsCircle, PhHeart } from "@phosphor-icons/vue";
 import easterEgg4Source from "../assets/easteregg4.mp3"
 import { gsap } from "gsap"
+import { likeManager } from "../stores/counter"
 
 
 
@@ -12,9 +13,10 @@ const buttonSound = new Audio(buttonSource)
 const easterEgg4 = new Audio(easterEgg4Source)
 const isPlay = ref(true)
 
+const likesStore = likeManager()
 
 // const currentIcon = ref(playIcon)
-const emits = defineEmits(["playMusic","pauseMusic"])
+const emits = defineEmits(["playMusic","pauseMusic", "refreshLikedMusic"])
 
 function playClicked() {
 
@@ -79,7 +81,7 @@ ws.addEventListener("message", (event) => {
     } 
 });
 
-function like() {
+function likeClick() {
 
     clickCount++
 
@@ -88,37 +90,22 @@ function like() {
         playVoice(easterEgg4)
     }
 
+    console.log("Clickcount :" + clickCount)
+
     buttonSound.play()
     liked.value = !liked.value
 
-    const allLikes = JSON.parse(localStorage.getItem("likes")) ?? []
 
     const musicName = document.querySelector("#name").innerHTML
     const musicAuthor = document.querySelector("#author").innerHTML
     const musicCover = document.querySelector("#cover").src
 
     if (liked.value) {
-        allLikes.push({
-            name : musicName,
-            author : musicAuthor,
-            cover : musicCover
-        })
-
-        localStorage.setItem("likes",JSON.stringify(allLikes))
+       likesStore.like(musicName,musicAuthor,musicCover)
     } else {
-        const index = allLikes.findIndex(music => 
-            music.name === musicName && 
-            music.author === musicAuthor
-        )
-
-        allLikes.splice(index, 1)
-
-        localStorage.setItem("likes",JSON.stringify(allLikes))
+        likesStore.dislike(musicName,musicAuthor,musicCover)
     }
 
-    console.log("Tous les likes :")
-    console.log(allLikes)
-    console.log("-----------------------")
 }
 
 setInterval(() => {
@@ -126,8 +113,6 @@ setInterval(() => {
     if (clickCount > 0) {
         clickCount--
     }
-
-    console.log("Clickcount :" + clickCount)
     
 }, 3000)
 
@@ -169,7 +154,7 @@ function toggleChat() {
 
 <div id="actionButtons">
 
-    <div @click="like" id="like" class="action white">
+    <div @click="likeClick" id="like" class="action white">
         <PhHeart v-if="liked" :size="22" weight="fill" />
         <PhHeart v-if="!liked" :size="22" />
     </div>
@@ -182,6 +167,8 @@ function toggleChat() {
     <div @click="toggleChat" id="chat" class="action white">
         <PhChatsCircle :size="22" weight="fill" />
     </div>
+
+    
 
 </div>
 

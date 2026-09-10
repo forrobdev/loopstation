@@ -3,8 +3,8 @@
 import MusicPlaying from './components/MusicPlaying.vue';
 import Background from './components/Background.vue';
 import Online from './components/Online.vue';
-import Chat from './components/Chat.vue';
 import ClassementLike from './components/ClassementLike.vue';
+
 
 </script>
 
@@ -15,10 +15,12 @@ import ClassementLike from './components/ClassementLike.vue';
   <Background></Background>
 
   <MusicPlaying></MusicPlaying>
+  
+  <ClassementLike></ClassementLike>
+
 
   <Chat></Chat>
 
-  <ClassementLike></ClassementLike>
   
 </template>
 
