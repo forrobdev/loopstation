@@ -10,10 +10,11 @@
 
     let nickname = 'Anonyme';
     const buttonSound = new Audio(buttonSource);
+    const gifs = ref({});
     
 
-    async function chargerPseudo() {
-        const reponse = await fetch('pseudos.json');
+    async function LoadPseudo() {
+        const reponse = await fetch('/pseudos.json');
         const data = await reponse.json();
         nickname = data.pseudos[Math.floor(Math.random() * data.pseudos.length)];
 
@@ -27,8 +28,9 @@
     console.log("On a injecté et ça a donnée ça :", ws)
 
     onMounted (async() => {
+        await LoadGif()
         if (localStorage.getItem("nickname") === null) {
-            await chargerPseudo()
+            await LoadPseudo()
         } else {
             nickname = localStorage.getItem("nickname")
             console.log("Nickname :" + nickname)
@@ -61,6 +63,8 @@
             id,
             nickname: data.nickname,
             text: data.text,
+            type: data.type,
+            gifUrl: data.gifUrl,
             time: displayedTime
         });
 
@@ -82,19 +86,36 @@
 
     function sendMessage() {
         const text = messageText.value;
+        const timestamp = Date.now();
+
+        if (text.startsWith("/gif")) {
+            const gifName = text.replace('/gif ', '').trim()
+            const gifUrl = gifs.value[gifName]
+
+            if (gifUrl) {
+                const data = JSON.stringify({
+                    nickname: nickname, 
+                    type: "gif",
+                    gifUrl: gifs.value[gifName],
+                    timestamp : timestamp
+                })
+                socket.send(data);
+                messageText.value = '';
+            }
+        }
     
         if (text !== '' && text.length <= 1000 && ws) {
             buttonSound.currentTime = 0;
             buttonSound.play();
     
-            const timestamp = Date.now();
+           
             const data = JSON.stringify({nickname : nickname, text: text, timestamp: timestamp })
             console.log("WS donne", ws)
             console.log("Data donne", data)
             ws.send(data);
             messageText.value = '';
         }
-    }
+    };
 
     function messageInputFocus() {
         console.log("Focus")
@@ -158,6 +179,12 @@
         }
     }
 
+    async function LoadGif() {
+        const reponse = await fetch('/gifs.json')
+        const data = await reponse.json();
+        gifs.value = data.gifs;
+    }
+    
 
 </script>
 
@@ -172,8 +199,8 @@
                 <p v-for="msg in messages" :key="msg.id">
                     <span :style="chooseColor(msg.nickname)">{{ msg.nickname }}, </span>
                     <span style="opacity: 0.5; font-size: 0.8em;">{{ msg.time }}</span>
-                    <br>
-                    {{ msg.text }}
+                    <img v-if="msg.type === 'gif'" :src="msg.gifUrl" alt="">
+                    <span v-else>{{ msg.text }}</span>
                     
                 </p>
                 </TransitionGroup>
