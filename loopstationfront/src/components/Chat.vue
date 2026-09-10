@@ -10,7 +10,7 @@
 
     let nickname = 'Anonyme';
     const buttonSound = new Audio(buttonSource);
-    const gifs = ref({});
+
     
 
     async function LoadPseudo() {
@@ -28,13 +28,6 @@
     console.log("On a injecté et ça a donnée ça :", ws)
 
     onMounted (async() => {
-        await LoadGif()
-        if (localStorage.getItem("nickname") === null) {
-            await LoadPseudo()
-        } else {
-            nickname = localStorage.getItem("nickname")
-            console.log("Nickname :" + nickname)
-        }
 
         ws.addEventListener('open', () => {
             console.log('Connecté au serveur Websocket');
@@ -87,31 +80,13 @@
     function sendMessage() {
         const text = messageText.value;
         const timestamp = Date.now();
-
-        if (text.startsWith("!gif")) {
-            const gifName = text.replace('!gif ', '').trim()
-            const gifUrl = gifs.value[gifName]
-
-            if (gifUrl) {
-                const data = JSON.stringify({
-                    nickname: nickname, 
-                    type: "gif",
-                    gifUrl: gifs.value[gifName],
-                    timestamp : timestamp
-                })
-                ws.send(data);
-                messageText.value = '';
-            }
-        }
     
-        else if (text !== '' && text.length <= 1000 && ws) {
+        // Plus de if (text.startsWith("!gif")) ! On envoie tout au serveur.
+        if (text !== '' && text.length <= 1000 && ws) {
             buttonSound.currentTime = 0;
             buttonSound.play();
     
-           
-            const data = JSON.stringify({nickname : nickname, text: text, timestamp: timestamp })
-            console.log("WS donne", ws)
-            console.log("Data donne", data)
+            const data = JSON.stringify({nickname: nickname, text: text, timestamp: timestamp })
             ws.send(data);
             messageText.value = '';
         }
@@ -178,12 +153,6 @@
             return "color: #FFBF00;"
         }
     }
-
-    async function LoadGif() {
-        const reponse = await fetch('/gif.json')
-        const data = await reponse.json();
-        gifs.value = data.gifs;
-    }
     
 
 </script>
@@ -200,7 +169,7 @@
                     <span :style="chooseColor(msg.nickname)">{{ msg.nickname }},</span>
                     <span style="opacity: 0.5; font-size: 0.8em;">{{ msg.time }}</span>
                     <br>
-                    <img v-if="msg.type === 'gif'" :src="msg.gifUrl" alt="">
+                    <img v-if="msg.type === 'gif'" :src="msg.gifUrl" alt="" id="gif">
                     <span v-else>{{ msg.text }}</span>
                     
                     
@@ -222,6 +191,11 @@
 
 <style>
 
+#gif {
+    height: auto;
+    width: 150px;
+}
+
 #chatZone {
     width: 100%;
     height: fit-content;
@@ -235,7 +209,7 @@
     position: fixed;
     bottom: 150px;
 
-    z-index: -1;
+    z-index: 2;
 }
 
 #chatBox {

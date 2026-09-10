@@ -3,6 +3,7 @@
     import {gsap} from 'gsap';
     import buttonSource from "../assets/button.mp3"
     import { likeManager } from "../stores/counter"
+    import {PhHeart} from "@phosphor-icons/vue";
 
 
 
@@ -72,6 +73,21 @@
         })
         
     }
+
+
+    function formatDate(timestamp) {
+
+        if (!timestamp) return ""; 
+
+        const date = new Date(timestamp);
+        
+
+        return new Intl.DateTimeFormat('fr-FR', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        }).format(date);
+    }
         
 </script>
 
@@ -93,6 +109,7 @@
                     <div class="likedRight">
                         <p class="likedName">{{ song.name }}</p>
                         <p class="likedAuthor">{{ song.author }}</p>
+                        <p class="likedDate">{{ formatDate(song.date) }}</p>
                     </div>
 
                     <PhHeart @click="likesStore.dislike(song.name, song.author)" id="likeIcon" :size="22" weight="fill" />
@@ -168,6 +185,11 @@
 
 .likedAuthor {
     font-size: 16px;
+}
+
+.likedDate {
+    color: #CACACA;
+    font-size: 12px;
 }
 
 #likeIcon {
