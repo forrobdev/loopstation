@@ -14,7 +14,7 @@
     
 
     async function LoadPseudo() {
-        const reponse = await fetch('pseudos.json');
+        const reponse = await fetch('/pseudos.json');
         const data = await reponse.json();
         nickname = data.pseudos[Math.floor(Math.random() * data.pseudos.length)];
 
@@ -24,9 +24,9 @@
     }
 
     onMounted (async() => {
+        await LoadGif()
         if (localStorage.getItem("nickname") === null) {
             await LoadPseudo()
-            await LoadGif()
         } else {
             nickname = localStorage.getItem("nickname")
             console.log("Nickname :" + nickname)
@@ -61,6 +61,8 @@
             id,
             nickname: data.nickname,
             text: data.text,
+            type: data.type,
+            gifUrl: data.gifUrl,
             time: displayedTime
         });
 
@@ -79,6 +81,7 @@
 
     function sendMessage() {
         const text = messageText.value;
+        const timestamp = Date.now();
 
         if (text.startsWith("/gif")) {
             const gifName = text.replace('/gif ', '').trim()
@@ -87,25 +90,25 @@
             if (gifUrl) {
                 const data = JSON.stringify({
                     nickname: nickname, 
-                    type: "/gif",
+                    type: "gif",
                     gifUrl: gifs.value[gifName],
                     timestamp : timestamp
                 })
                 socket.send(data);
                 messageText.value = '';
             }
-        };
+        }
     
-        if (text !== '' && text.length <= 1000 && socket) {
+        else if (text !== '' && text.length <= 1000 && socket) {
             buttonSound.currentTime = 0;
             buttonSound.play();
     
-            const timestamp = Date.now();
+           
             const data = JSON.stringify({nickname : nickname, text: text, timestamp: timestamp })
             socket.send(data);
             messageText.value = '';
         }
-    }
+    };
 
     function messageInputFocus() {
         console.log("Focus")
@@ -147,7 +150,7 @@
     }
 
     async function LoadGif() {
-        const reponse = await fetch('gifs.json')
+        const reponse = await fetch('/gifs.json')
         const data = await reponse.json();
         gifs.value = data.gifs;
     }
@@ -165,8 +168,8 @@
                 <p v-for="msg in messages" :key="msg.id">
                     <span style="color: #FFBF00;">{{ msg.nickname }}, </span>
                     <span style="opacity: 0.5; font-size: 0.8em;">{{ msg.time }}</span>
-                    <br>
-                    {{ msg.text }}
+                    <img v-if="msg.type === 'gif'" :src="msg.gifUrl" alt="">
+                    <span v-else>{{ msg.text }}</span>
                     
                 </p>
             </div>
