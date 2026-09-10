@@ -99,7 +99,7 @@
                     gifUrl: gifs.value[gifName],
                     timestamp : timestamp
                 })
-                socket.send(data);
+                ws.send(data);
                 messageText.value = '';
             }
         }
@@ -197,11 +197,12 @@
             <div id="messages">
                 <TransitionGroup @enter="newMessageAnim" :css="false">
                 <p v-for="msg in messages" :key="msg.id">
-                    <span :style="chooseColor(msg.nickname)">{{ msg.nickname }}, </span>
+                    <span :style="chooseColor(msg.nickname)">{{ msg.nickname }},</span>
                     <span style="opacity: 0.5; font-size: 0.8em;">{{ msg.time }}</span>
+                    <br>
                     <img v-if="msg.type === 'gif'" :src="msg.gifUrl" alt="">
                     <span v-else>{{ msg.text }}</span>
-                    <span style="opacity: 0.5; font-size: 0.8em;">{{ msg.time }}</span>
+                    
                     
                 </p>
                 </TransitionGroup>

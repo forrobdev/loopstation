@@ -250,11 +250,12 @@ wss.on('connection', (ws) => {
         // Sauvegarder le message dans l'historique
         historique.push(texte);
 
+        const data = JSON.parse(texte);
         const estUnGif = data && data.type === 'gif';
         const contientLienInterdit = texte.includes("<") || texte.includes(">") || texte.includes("http") || texte.includes(".com");
 
-        // 3. On utilise bien chatWss.clients ici aussi
-        chatWss.clients.forEach((client) => {
+        // 3. On utilise bien ws.clients ici aussi
+        wss.clients.forEach((client) => {
             if (client.readyState === WebSocket.OPEN) {
                 if (contientLienInterdit && !estUnGif) {
                     client.send(JSON.stringify({
