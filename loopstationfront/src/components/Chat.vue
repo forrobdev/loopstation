@@ -83,8 +83,8 @@
         const text = messageText.value;
         const timestamp = Date.now();
 
-        if (text.startsWith("/gif")) {
-            const gifName = text.replace('/gif ', '').trim()
+        if (text.startsWith("!gif")) {
+            const gifName = text.replace('!gif ', '').trim()
             const gifUrl = gifs.value[gifName]
 
             if (gifUrl) {
@@ -150,7 +150,7 @@
     }
 
     async function LoadGif() {
-        const reponse = await fetch('/gifs.json')
+        const reponse = await fetch('/gif.json')
         const data = await reponse.json();
         gifs.value = data.gifs;
     }
@@ -165,11 +165,12 @@
     <div id="chatZone" v-if="chatStore.chatOpened">
         <div id="chatBox" ref="chatBox" class="white">
             <div id="messages">
-                <p v-for="msg in messages" :key="msg.id">
-                    <span style="color: #FFBF00;">{{ msg.nickname }}, </span>
-                    <span style="opacity: 0.5; font-size: 0.8em;">{{ msg.time }}</span>
+                <p v-for="msg in messages" :key="msg.id" class="messageLine">
+                    <span style="color: #FFBF00;">{{ msg.nickname }} :</span>
+                    
                     <img v-if="msg.type === 'gif'" :src="msg.gifUrl" alt="">
                     <span v-else>{{ msg.text }}</span>
+                    <span style="opacity: 0.5; font-size: 0.8em;">{{ msg.time }}</span>
                     
                 </p>
             </div>
@@ -242,6 +243,11 @@
     padding: 10px 15px;
 }
 
-
+.messageLine {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px;
+}
 
 </style>
