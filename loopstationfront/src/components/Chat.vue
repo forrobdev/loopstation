@@ -104,7 +104,7 @@
             }
         }
     
-        if (text !== '' && text.length <= 1000 && ws) {
+        else if (text !== '' && text.length <= 1000 && ws) {
             buttonSound.currentTime = 0;
             buttonSound.play();
     
