@@ -200,7 +200,7 @@
                     <span :style="chooseColor(msg.nickname)">{{ msg.nickname }},</span>
                     <span style="opacity: 0.5; font-size: 0.8em;">{{ msg.time }}</span>
                     <br>
-                    <img v-if="msg.type === 'gif'" :src="msg.gifUrl" alt="">
+                    <img v-if="msg.type === 'gif'" :src="msg.gifUrl" alt="" id="gif">
                     <span v-else>{{ msg.text }}</span>
                     
                     
@@ -221,6 +221,11 @@
 </template>
 
 <style>
+
+#gif {
+    height: auto;
+    width: 100px;
+}
 
 #chatZone {
     width: 100%;
