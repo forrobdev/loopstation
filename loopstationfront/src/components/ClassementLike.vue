@@ -1,5 +1,6 @@
 <script setup>
     import {ref, onMounted, nextTick} from 'vue';
+    import { PhPlay, PhPause, PhChatsCircle, PhHeart } from "@phosphor-icons/vue";
     import {gsap} from 'gsap';
     
     const likesSongs = ref([]);
@@ -12,6 +13,23 @@
         } else {
             likesSongs.value = [];   
         }
+    };
+
+    function unLikesSongs (song) {
+        let indexRemove = -1;
+
+
+        for(let i = 0 ; i < likesSongs.value.length  ; i = i + 1 ) {
+            if (likesSongs.value[i].name === song.name && likesSongs.value[i].author === song.author) {
+                indexRemove = i;
+            };
+        };
+
+        if(indexRemove !== -1) {
+            likesSongs.value.splice(indexRemove, 1);
+            localStorage.setItem("likes", JSON.stringify(likesSongs.value))
+        };
+
     };
 
 
@@ -39,6 +57,9 @@
                     <div class="infos">
                         <span class="name">{{ song.name }}</span>
                         <span class="author">{{ song.author }}</span>
+                        <div @click = "unLikesSongs(song)" class="action white unlike">
+                                <PhHeart :size="20" weight="fill" />
+                        </div>
                     </div>
                 </li>
             </ul>
@@ -79,6 +100,8 @@
     padding: 15px 20px;
 }
 
+
+
 .empty {
 
 }
@@ -105,6 +128,16 @@
 }
 
 
+.unlike {
+    display : flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
 
+    
+    width:  30px;
+    height: 30px;
+    height: fit-content;
+}
 
 </style>
