@@ -40,28 +40,27 @@ function initVisualizer() {
 
     const presetsObj = butterchurnPresets.default ? butterchurnPresets.default.getPresets() : butterchurnPresets.getPresets();
     const presetNames = Object.keys(presetsObj);
+    console.log(presetNames)
 
     const favoritePresets = [
         "_Mig_085",
         "$$$ Royal - Mashup (220)",
         "An AdamFX n Martin Infusion 2 flexi - Why The Sky Looks Diffrent Today - AdamFx n Martin Infusion - Tack Tile Disfunction B",
         "cope + martin - mother-of-pearl",
-        "flexi + amandio c - organic12-3d-2.milk",
         "Flexi + stahlregen - jelly showoff parade",
         "Geiss - Cauldron - painterly 2 (saturation remix)",
         "martin - castle in the air",
-        "Martin - charisma",
         "Martin - liquid arrows",
         "martin [shadow harlequins shape code] - fata morgana",
-        "ORB - Waaa",
         "Rovastar - Oozing Resistance",
         "Unchained - Rewop",
         "Unchained - Unified Drag 2",
-        "yin - 191 - Temporal singularities"
+        "yin - 191 - Temporal singularities",
     ];
 
     const loadRandomPreset = (transitionTime = 0) => {
         const randomName = favoritePresets[Math.floor(Math.random() * favoritePresets.length)];
+        console.log("On a choisi", randomName)
         visualizer.loadPreset(presetsObj[randomName], transitionTime);
     };
 
