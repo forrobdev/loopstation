@@ -105,7 +105,7 @@ function playMusic() {
     
     const audio = audioRef.value;
     const timestamp = new Date().getTime();
-    const baseUrl = import.meta.env.VITE_API_KEY;
+    const baseUrl = import.meta.env.VITE_API_STREAM;
     
     audio.src = `${baseUrl}/stream?t=${timestamp}`;
 
