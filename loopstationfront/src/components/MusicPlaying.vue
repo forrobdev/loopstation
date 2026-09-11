@@ -142,7 +142,7 @@ onMounted(() => {
     transition: transform 0.2s ease;
     transform-style: preserve-3d;
 
-    position: absolute;
+    position: fixed;
     top : 50px;
     left: 50px;
 

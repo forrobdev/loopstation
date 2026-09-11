@@ -96,7 +96,6 @@
     };
 
     function messageInputFocus() {
-        console.log("Focus")
         messageInputFocused = true
     }
 
@@ -164,11 +163,20 @@
             return "color: #FFBF00;"
         }
     }
+
+    function closeLikesOnClickOutside() {
+        if (chatStore.chatOpened) {
+            buttonSound.play();
+            chatStore.chatOpened = !chatStore.chatOpened
+        }
+    }
     
 
 </script>
 
 <template>
+
+    <div v-if="chatStore.chatOpened" @click="closeLikesOnClickOutside" id="chat-backdrop"></div>
 
     <Transition @enter="openChatAnim" @leave="closeChatAnim" :css="false">
     
@@ -207,6 +215,16 @@
     width: 150px;
 }
 
+#chat-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 24;
+    background: rgba(0, 0, 0, 0.748);;
+}
+
 #chatZone {
     width: 100%;
     height: fit-content;
@@ -219,7 +237,7 @@
     position: fixed;
     bottom: 150px;
 
-    z-index: 2;
+    z-index: 25;
 }
 
 #chatBox {

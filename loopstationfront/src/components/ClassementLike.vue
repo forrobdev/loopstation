@@ -27,6 +27,12 @@
         } 
     });
 
+    function closeLikesOnClickOutside() {
+        if (likesOpened.value) {
+            openLikes();
+        }
+    }
+
     function openLikes() {
 
         buttonSound.play()
@@ -96,12 +102,16 @@
 
 
 <template>
+
+    <div v-if="likesOpened" @click="closeLikesOnClickOutside" id="likes-backdrop"></div>
+
+
     <div id="likesZone">
 
-        <div @click="openLikes" class="white title" v-if="likesStore.likesArray.length > 0">
+        <button @click="openLikes" class="white title" v-if="likesStore.likesArray.length > 0">
             <p v-if="!likesOpened">My favorite songs</p>
             <PhArrowDown v-if="likesOpened" :size="20" weight="bold"/>
-        </div>
+        </button>
 
         
         <div id="allLikedMusic" v-if="likesOpened">
@@ -136,6 +146,7 @@
     cursor: pointer;
     padding: 10px 20px;
     border-radius: 100px;
+    color: black;
 }
 
 #likesZone {
@@ -216,10 +227,21 @@
     height: fit-content;
 }
 
+#likes-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 15;
+    background: transparent;
+}
+
 @media (max-width: 1120px) {
     #likesZone {
         left: 50%;
         margin-left: -200px;
+        bottom: 0%;
     }
 
     #allLikedMusic {

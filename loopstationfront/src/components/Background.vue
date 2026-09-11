@@ -207,7 +207,7 @@ audio {
 canvas {
     height: 100%;
     width: 100%;
-    position : absolute;
+    position : fixed;
     z-index: -1;
     top: 0px;
 }

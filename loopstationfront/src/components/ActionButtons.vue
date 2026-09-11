@@ -152,6 +152,7 @@ function toggleChat() {
     overflow : hidden;
     width: 60px;
     height: 60px;
+    color: black;
 
     
 
@@ -174,7 +175,7 @@ function toggleChat() {
     align-items: center;
     gap: 30px;
 
-    position: absolute;
+    position: fixed;
     bottom : 40px;
 
     z-index: 4;
@@ -184,7 +185,7 @@ function toggleChat() {
 
 @media (max-width: 1120px) {
     #actionButtons {
-        bottom: 100px;
+        bottom: 15%;
     }
 }
 
