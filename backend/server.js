@@ -6,6 +6,8 @@ import cors from "cors"
 import {styleText} from 'node:util'
 import { WebSocketServer, WebSocket } from 'ws';
 
+import 'dotenv/config'
+
 import ffmpegPath from 'ffmpeg-static';
 import ffprobeStatic from 'ffprobe-static';
 
@@ -263,7 +265,7 @@ wss.on('connection', (ws) => {
 
         if (messageContent.startsWith("!gif ")) {
             const keyword = messageContent.replace('!gif ', '').trim();
-            const GIPHY_API_KEY = import.meta.env.GIPHY_API_KEY
+            const GIPHY_API_KEY = process.env.GIPHY_API_KEY
 
             try {
                 const response = await fetch(`https://api.giphy.com/v1/gifs/translate?api_key=${GIPHY_API_KEY}&s=${encodeURIComponent(keyword)}`);
