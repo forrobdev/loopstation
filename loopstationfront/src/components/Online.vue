@@ -131,6 +131,11 @@ function animateCard() {
 .online p {
     font-weight: 600;
     font-size: 22px;
+
+    -webkit-user-select: none; /* Safari */
+  -moz-user-select: none;    /* Firefox */
+  -ms-user-select: none;     /* Internet Explorer/Edge */
+  user-select: none;   
 }
 
 .green {

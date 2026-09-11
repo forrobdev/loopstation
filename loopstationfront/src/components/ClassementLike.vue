@@ -3,7 +3,7 @@
     import {gsap} from 'gsap';
     import buttonSource from "../assets/button.mp3"
     import { likeManager } from "../stores/counter"
-    import {PhHeart} from "@phosphor-icons/vue";
+    import {PhHeart,PhArrowDown} from "@phosphor-icons/vue";
 
 
 
@@ -22,6 +22,18 @@
     });
 
     let likesOpened = ref(false)
+
+    document.addEventListener('keydown', (e) => {
+
+        if (e.key === "Escape") {
+            if (likesOpened.value) {
+                openLikes()
+            }
+        }
+
+        
+        
+    });
 
     function openLikes() {
 
@@ -82,7 +94,7 @@
         const date = new Date(timestamp);
         
 
-        return new Intl.DateTimeFormat('fr-FR', {
+        return new Intl.DateTimeFormat('en-UK', {
             day: 'numeric',
             month: 'long',
             year: 'numeric'
@@ -96,7 +108,8 @@
     <div id="likesZone">
 
         <div @click="openLikes" class="white title" v-if="likesStore.likesArray.length > 0">
-            <p>My favorite songs</p>
+            <p v-if="!likesOpened">My favorite songs</p>
+            <PhArrowDown v-if="likesOpened" :size="20" weight="bold"/>
         </div>
 
         
@@ -193,9 +206,9 @@
 }
 
 #likeIcon {
-    position: absolute;
-    right: 20px;
-    bottom: 20px;
+    position: relative;
+    right: -8px;
+    bottom: -40px;
     cursor: pointer;
 }
 
@@ -212,14 +225,15 @@
     height: fit-content;
 }
 
-@media (max-width: 750px) {
+@media (max-width: 1120px) {
     #likesZone {
-        left: 50px;
+        left: 50%;
+        margin-left: -200px;
     }
 
     #allLikedMusic {
-        background-color: rgba(0, 0, 0, 0.489);
-        border-radius: 28px 28px 0 0;
+        background-color: rgba(0, 0, 0, 0.748);
+        border-radius: 32px 32px 0 0;
     }
 }
 

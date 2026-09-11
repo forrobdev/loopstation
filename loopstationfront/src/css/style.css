@@ -16,3 +16,37 @@ body {
     border: none;
 }
 
+@media (max-width: 1120px) {
+    .white {
+        filter: none;
+    }
+}
+
+html, body {
+    /* 1. Coupe tout ce qui dépasse, adieu le scroll de la page ! */
+    overflow: hidden; 
+    
+    /* 2. Empêche le rebond élastique ("pull-to-refresh") sur iOS et Android */
+    overscroll-behavior: none; 
+    
+    /* 3. Empêche le double-tap pour zoomer (très fréquent quand on spamme un bouton) */
+    touch-action: manipulation; 
+    
+    /* Optionnel mais recommandé : 
+       Empêche l'utilisateur de sélectionner le texte par erreur 
+       en restant appuyé sur l'écran */
+    -webkit-user-select: none;
+    user-select: none;
+    
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+/* 4. On réautorise la sélection de texte UNIQUEMENT dans l'input du chat */
+input, textarea {
+    -webkit-user-select: auto;
+    user-select: auto;
+}
+

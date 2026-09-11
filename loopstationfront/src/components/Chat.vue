@@ -112,6 +112,7 @@
         messageInputFocused = true
     }
 
+
     
 
     document.addEventListener('keydown', (e) => {
@@ -120,6 +121,13 @@
         
         if (messageInputFocused) {
             buttonSound.play();
+        }
+
+        if (e.key === "Escape") {
+            if (chatStore.chatOpened) {
+                buttonSound.play();
+                chatStore.chatOpened = !chatStore.chatOpened
+            }
         }
     });
 
@@ -181,7 +189,7 @@
             <div id="messages">
                 <TransitionGroup @enter="newMessageAnim" :css="false">
                 <p v-for="msg in messages" :key="msg.id">
-                    <span :style="chooseColor(msg.nickname)">{{ msg.nickname }},</span>
+                    <span :style="chooseColor(msg.nickname)">{{ msg.nickname }}, </span>
                     <span style="opacity: 0.5; font-size: 0.8em;">{{ msg.time }}</span>
                     <br>
                     <img v-if="msg.type === 'gif'" :src="msg.gifUrl" alt="" id="gif">

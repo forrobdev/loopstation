@@ -97,10 +97,12 @@ function playVoice(voiceAudio) {
 
 let firstLaunch = true
 
+
 function playMusic() {
     console.log("Lancé la team");
 
     if (firstLaunch) {
+
         playVoice(welcome)
         firstLaunch = false
     }
@@ -169,8 +171,8 @@ function resetLogo() {
 <template>
 
 
-    <div v-if="!visualizerInit" id="logoParent" >
-        <img @mousemove="moveLogo" @mouseleave="resetLogo" :src="logoSource" alt="Loop Station Logo" id="logo" ref="logoRef">
+    <div @mousemove="moveLogo" @mouseleave="resetLogo" v-if="!visualizerInit" id="logoParent" >
+        <img  :src="logoSource" alt="Loop Station Logo" id="logo" ref="logoRef">
     </div>
     
 

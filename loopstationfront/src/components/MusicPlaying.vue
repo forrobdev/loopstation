@@ -186,9 +186,10 @@ onMounted(() => {
 @media (max-width: 750px) {
     #musicPlaying {
         width: 130px;
-        height: 170px;
+        height: 215px;
         top: 30px;
         left: 20px;
+        align-items: flex-start;
     }
 
     #nowPlaying {
@@ -196,11 +197,13 @@ onMounted(() => {
     }
 
     #name {
-        font-size: 16px;
+        font-size: 18px;
+        text-align: left;
     }
 
     #author {
-        margin-top : -5px;
+        text-align: left !important;
+        margin-top : 0px;
         font-size: 12px;
     }
 }

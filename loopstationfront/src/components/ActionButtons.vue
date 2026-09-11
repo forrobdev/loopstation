@@ -11,7 +11,6 @@ import { playerManager } from "../stores/playerManager"
 
 
 
-
 const buttonSound = new Audio(buttonSource)
 const easterEgg4 = new Audio(easterEgg4Source)
 const isPlay = ref(true)
@@ -26,6 +25,7 @@ const playerStore = playerManager()
 const emits = defineEmits(["playMusic","pauseMusic", "refreshLikedMusic"])
 
 function playClicked() {
+
 
     console.log("Salut t'as cliqué")
     buttonSound.play()
@@ -68,6 +68,7 @@ let clickCount = 0
 
 function likeClick() {
 
+
     clickCount++
 
     if (clickCount === 10) {
@@ -102,10 +103,14 @@ setInterval(() => {
 
 
 function toggleChat() {
+
+
+
     buttonSound.play()
 
     chatStore.chatOpened = !chatStore.chatOpened
 }
+
 
 </script>
 
@@ -116,7 +121,7 @@ function toggleChat() {
 
     <div @click="likeClick" id="like" class="action white">
         <PhHeart v-if="likesStore.isCurrentMusicLiked" :size="22" weight="fill" />
-        <PhHeart v-else="likesStore.isCurrentMusicLiked" :size="22" />
+        <PhHeart v-else :size="22" />
     </div>
 
     <div @click="playClicked" id="pause" class="action white">
@@ -186,7 +191,7 @@ function toggleChat() {
     height: fit-content;
 }
 
-@media (max-width: 750px) {
+@media (max-width: 1120px) {
     #actionButtons {
         bottom: 100px;
     }
