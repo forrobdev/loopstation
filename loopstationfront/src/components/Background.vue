@@ -105,8 +105,10 @@ function playMusic() {
     
     const audio = audioRef.value;
     const timestamp = new Date().getTime();
-    audio.src = `/stream?t=${timestamp}`;
+    const baseUrl = import.meta.env.VITE_API_KEY;
     
+    audio.src = `${baseUrl}/stream?t=${timestamp}`;
+
     audio.play().catch(err => console.log("Erreur lecture audio:", err));
 
     if (!visualizerInit.value) {
