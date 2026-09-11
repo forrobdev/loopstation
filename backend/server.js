@@ -6,6 +6,9 @@ import cors from "cors"
 import {styleText} from 'node:util'
 import { WebSocketServer, WebSocket } from 'ws';
 
+import ffmpegPath from 'ffmpeg-static';
+import ffprobeStatic from 'ffprobe-static';
+
 //Temporairez
 import readline from 'node:readline';
 
@@ -14,7 +17,7 @@ function getRandomInt(max) {
 }
 
 const app = express()
-const PORT = 3000
+const PORT = process.env.PORT || 3000;
 
 let playlist = []
 let currentTrackIndex = getRandomInt(21)
@@ -83,7 +86,7 @@ const loadJingles = async () => {
 
 function getMediaDuration(filePath) {
     try {
-        const output = execSync(`ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${filePath}"`);
+        const output = execSync(`"${ffprobeStatic.path}" -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${filePath}"`);
         return parseFloat(output.toString().trim());
     } catch (err) {
         console.log(styleText(['bold', 'yellow'], 'Erreur ffprobe, durée par défaut 5s utilisée'));
@@ -96,7 +99,7 @@ const playTrack = (index) => {
     const trackPath = playlist[index];
     console.log(`▶ Okok, now playing: ${path.basename(trackPath)}`);
 
-    // --- WEBSOCKET : On prévient tout le monde que la musique change ---
+
     if (wss) {
         const trackInfo = getTrackInfoFromJSON(trackPath);
         const message = JSON.stringify({ type: 'track', data: trackInfo });
@@ -139,7 +142,7 @@ const playTrack = (index) => {
     }
 
     // Lancement du process
-    ffmpegProcess = spawn('ffmpeg', ffmpegArgs);
+    ffmpegProcess = spawn(ffmpegPath, ffmpegArgs);
 
     ffmpegProcess.stdout.on('data', (chunk) => {
         for (const client of clients) client.write(chunk);
@@ -258,7 +261,7 @@ wss.on('connection', (ws) => {
 
         if (messageContent.startsWith("!gif ")) {
             const keyword = messageContent.replace('!gif ', '').trim();
-            const GIPHY_API_KEY = "iywd34k9C4R7XgEZiCJ2FEIh4GKfU6d0";
+            const GIPHY_API_KEY = import.meta.env.GIPHY_API_KEY
 
             try {
                 const response = await fetch(`https://api.giphy.com/v1/gifs/translate?api_key=${GIPHY_API_KEY}&s=${encodeURIComponent(keyword)}`);
@@ -274,9 +277,6 @@ wss.on('connection', (ws) => {
                         gifUrl: gifUrl,
                         timestamp: Date.now()
                     });
-
-
-                    historique.push(botMessage);
 
 
                     wss.clients.forEach((client) => {
