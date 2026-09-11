@@ -21,17 +21,16 @@ const chatStore = chatManager()
 
 const playerStore = playerManager()
 
-// const currentIcon = ref(playIcon)
+let clickCount = 0
+
+
 const emits = defineEmits(["playMusic","pauseMusic", "refreshLikedMusic"])
 
 function playClicked() {
 
-
-    console.log("Salut t'as cliqué")
     buttonSound.play()
     
     if (!isPlay.value) {
-        console.log("On veut mettre pause !!")
         isPlay.value = true
         
         emits("pauseMusic")
@@ -40,7 +39,6 @@ function playClicked() {
         emits("playMusic")
     }
 
-    console.log("isPLay :" + isPlay.value)
 }
 
 
@@ -59,12 +57,12 @@ function playVoice(voiceAudio) {
         if (bgMusic) {
             gsap.to(bgMusic, { volume: 1, duration: 0.5 });
         }
-    };
+    }
 }
 
 
 
-let clickCount = 0
+
 
 function likeClick() {
 
@@ -75,10 +73,6 @@ function likeClick() {
         clickCount = 0
         playVoice(easterEgg4)
     }
-
-    console.log("Clickcount :" + clickCount)
-
-
 
     const musicName = playerStore.currentMusic.name
     const musicAuthor = playerStore.currentMusic.author
@@ -104,8 +98,6 @@ setInterval(() => {
 
 function toggleChat() {
 
-
-
     buttonSound.play()
 
     chatStore.chatOpened = !chatStore.chatOpened
@@ -119,21 +111,20 @@ function toggleChat() {
 
 <div id="actionButtons">
 
-    <div @click="likeClick" id="like" class="action white">
+    <button @click="likeClick" id="like" class="action white">
         <PhHeart v-if="likesStore.isCurrentMusicLiked" :size="22" weight="fill" />
         <PhHeart v-else :size="22" />
-    </div>
+    </button>
 
-    <div @click="playClicked" id="pause" class="action white">
+    <button @click="playClicked" id="pause" class="action white">
         <PhPlay v-if="isPlay" :size="32" weight="fill" />
         <PhPause v-else="isPlay" :size="32" weight="fill" />
-    </div>
+    </button>
 
-    <div @click="toggleChat" id="chat" class="action white">
+    <button @click="toggleChat" id="chat" class="action white">
         <PhChatsCircle :size="22" weight="fill" />
-    </div>
+    </button>
 
-    
 
 </div>
 

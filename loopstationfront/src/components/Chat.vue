@@ -10,7 +10,7 @@
 
     let nickname = ref('Anonyme');
     const buttonSound = new Audio(buttonSource);
-
+    let messageInputFocused = false
     
 
     async function LoadPseudo() {
@@ -18,14 +18,10 @@
         const data = await reponse.json();
         nickname.value = data.pseudos[Math.floor(Math.random() * data.pseudos.length)];
 
-        console.log("Nickname :" + nickname.value)
-
         localStorage.setItem("nickname", nickname.value)
     }
 
     const ws = inject("ws")
-
-    console.log("On a injecté et ça a donnée ça :", ws)
 
     onMounted (async() => {
 
@@ -35,12 +31,7 @@
             await LoadPseudo();
         } else {
             nickname.value = savedNickname;
-            console.log("Nickname récupéré du storage :", nickname.value);
         }
-
-        ws.addEventListener('open', () => {
-            console.log('Connecté au serveur Websocket');
-        });
 
         ws.addEventListener('message', receiveMessage);
     })
@@ -57,8 +48,6 @@
         if (data.type === 'track' || data.type === 'listeners') {
             return; 
         }
-
-        
   
         const messageDate = new Date(data.timestamp);
         const hours = messageDate.getHours().toString().padStart(2, '0');
@@ -90,13 +79,12 @@
         }, 60000);
     }
 
-    let messageInputFocused = false
+    
 
     function sendMessage() {
         const text = messageText.value;
         const timestamp = Date.now();
     
-        // Plus de if (text.startsWith("!gif")) ! On envoie tout au serveur.
         if (text !== '' && text.length <= 1000 && ws) {
             buttonSound.currentTime = 0;
             buttonSound.play();
@@ -226,7 +214,6 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
     gap : 10px;
 
     position: fixed;

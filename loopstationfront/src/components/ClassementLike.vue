@@ -5,12 +5,9 @@
     import { likeManager } from "../stores/counter"
     import {PhHeart,PhArrowDown} from "@phosphor-icons/vue";
 
-
-
-
     const buttonSound = new Audio(buttonSource)
-    
     const likesStore = likeManager()
+    let likesOpened = ref(false)
 
 
     onMounted (() => {
@@ -21,18 +18,13 @@
         })
     });
 
-    let likesOpened = ref(false)
 
     document.addEventListener('keydown', (e) => {
-
         if (e.key === "Escape") {
             if (likesOpened.value) {
                 openLikes()
             }
-        }
-
-        
-        
+        } 
     });
 
     function openLikes() {
@@ -93,7 +85,6 @@
 
         const date = new Date(timestamp);
         
-
         return new Intl.DateTimeFormat('en-UK', {
             day: 'numeric',
             month: 'long',
@@ -236,7 +227,5 @@
         border-radius: 32px 32px 0 0;
     }
 }
-
-
 
 </style>

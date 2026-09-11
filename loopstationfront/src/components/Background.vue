@@ -17,6 +17,7 @@ let visualizerInit = ref(false);
 let visualizer = null;
 
 const welcome = new Audio(welcomeSource)
+let firstLaunch = true
 
 
 function initVisualizer() {
@@ -59,11 +60,8 @@ function initVisualizer() {
         "yin - 191 - Temporal singularities"
     ];
 
-    console.log("Presets : " + presetNames)
-
     const loadRandomPreset = (transitionTime = 0) => {
         const randomName = favoritePresets[Math.floor(Math.random() * favoritePresets.length)];
-        console.log("Voici le random que j'ai choisi : " + randomName)
         visualizer.loadPreset(presetsObj[randomName], transitionTime);
     };
 
@@ -95,14 +93,12 @@ function playVoice(voiceAudio) {
     };
 }
 
-let firstLaunch = true
+
 
 
 function playMusic() {
-    console.log("Lancé la team");
 
     if (firstLaunch) {
-
         playVoice(welcome)
         firstLaunch = false
     }
@@ -120,7 +116,6 @@ function playMusic() {
 }
 
 function pauseMusic() {
-    console.log("STOPPP");
     const audio = audioRef.value;
     audio.pause();
 }
@@ -201,8 +196,6 @@ function resetLogo() {
     height: 200px;
     width: auto;
     opacity: 0.2;
-    
-
 }
 
 audio {
@@ -216,8 +209,5 @@ canvas {
     z-index: -1;
     top: 0px;
 }
-
-
-
 
 </style>

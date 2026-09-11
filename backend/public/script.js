@@ -73,7 +73,6 @@ ws.onmessage = (event) => {
     
     // Si c'est une nouvelle musique
     if (message.type === 'track') {
-        console.log("Nouvelle musique :", message.data);
         animNextMusic(message.data.name, message.data.author, message.data.cover);
     } 
     // Si c'est une mise à jour du nombre d'auditeurs

@@ -6,18 +6,16 @@ import { playerManager } from "../stores/playerManager"
 
 
 const playerStore = playerManager()
-
-
 const ws = inject("ws")
-
+let isAnimating = false;
 const musicInfos = ref({})
+
 
 ws.addEventListener("message", (event) => {
     const message = JSON.parse(event.data);
     
     // Si c'est une nouvelle musique
     if (message.type === 'track') {
-        console.log("Nouvelle musique :", message.data);
         animNextMusic(message.data);
         document.title = message.data.name + " - " +  message.data.author + " on Loop Station";
         playerStore.currentMusic = {
@@ -25,13 +23,11 @@ ws.addEventListener("message", (event) => {
             author : message.data.author,
             cover : message.data.cover,
         }
-        console.log("Nouvelle musique enregistrée dans le PlayerStore")
-        console.log(playerStore.currentMusic)
     } 
 });
 
 
-let isAnimating = false;
+
 
 function animNextMusic(data) {
     isAnimating = true;
@@ -50,14 +46,11 @@ function animNextMusic(data) {
     let tl = gsap.timeline({
         overwrite: true,
         onComplete: () => {
-            // 1. On nettoie GSAP quand on est sagement revenu à 0°
             gsap.set(poster, { clearProps: "transform" });
             
-            // 2. On attend la prochaine frame du navigateur pour réactiver le CSS
-            // Ça évite le bug du "360 ultra rapide" !
             requestAnimationFrame(() => {
                 poster.style.transition = "transform 0.1s ease";
-                isAnimating = false; // On rend le contrôle à la souris
+                isAnimating = false;
             });
         }
     });
@@ -65,17 +58,16 @@ function animNextMusic(data) {
     tl.set(poster, { rotationX: 0, rotationY: 0 })
       .to(poster, {
         rotationY: 90,
-        duration: 0.2, // Rapide et sec pour cacher l'image
+        duration: 0.2,
         ease: "power2.in",
         onComplete: () => {
-            // On met à jour les données quand la carte est de profil
             musicInfos.value = data;
         }
     })
-      // On triche : on la place de l'autre côté instantanément
+
       .set(poster, { rotationY: -90 }) 
       .to(poster, {
-        rotationY: 0, // Elle revient à plat naturellement
+        rotationY: 0,
         duration: 0.3,
         ease: "power2.out"
     });
