@@ -181,27 +181,32 @@
     <Transition @enter="openChatAnim" @leave="closeChatAnim" :css="false">
     
     <div id="chatZone" v-if="chatStore.chatOpened">
-        <div id="chatBox" ref="chatBox" class="white">
-            <div id="messages">
-                <TransitionGroup @enter="newMessageAnim" :css="false">
-                <p v-for="msg in messages" :key="msg.id">
-                    <span :style="chooseColor(msg.nickname)">{{ msg.nickname }}, </span>
-                    <span style="opacity: 0.5; font-size: 0.8em;">{{ msg.time }}</span>
-                    <br>
-                    <img v-if="msg.type === 'gif'" :src="msg.gifUrl" alt="" id="gif">
-                    <span v-else>{{ msg.text }}</span>
-                    
-                    
-                </p>
-                </TransitionGroup>
+        <div class="fillChat" @click="closeLikesOnClickOutside"></div>
+        <div id="chatZoneVert">
+            <div id="chatBox" ref="chatBox" class="white">
+                <div id="messages">
+                    <TransitionGroup @enter="newMessageAnim" :css="false">
+                    <p v-for="msg in messages" :key="msg.id">
+                        <span :style="chooseColor(msg.nickname)">{{ msg.nickname }}, </span>
+                        <span style="opacity: 0.5; font-size: 0.8em;">{{ msg.time }}</span>
+                        <br>
+                        <img v-if="msg.type === 'gif'" :src="msg.gifUrl" alt="" id="gif">
+                        <span v-else>{{ msg.text }}</span>
+                        
+                        
+                    </p>
+                    </TransitionGroup>
+                </div>
+            </div>
+
+            <div id="chatBottom" class="white">
+                <input type="text" id="messageInput" placeholder="Votre message" v-model="messageText" @keyup.enter="sendMessage" @focus="messageInputFocused = true" @blur="messageInputFocused = false">
+                <PhPaperPlaneTilt @click="sendMessage" :size="28" weight="fill" style="cursor: pointer;" />
             </div>
         </div>
-
-        <div id="chatBottom" class="white">
-            <input type="text" id="messageInput" placeholder="Votre message" v-model="messageText" @keyup.enter="sendMessage" @focus="messageInputFocused = true" @blur="messageInputFocused = false">
-            <PhPaperPlaneTilt @click="sendMessage" :size="28" weight="fill" style="cursor: pointer;" />
-        </div>
         
+
+        <div class="fillChat" @click="closeLikesOnClickOutside"></div>
     </div>
 
     </Transition>
@@ -222,14 +227,19 @@
     width: 100vw;
     height: 100vh;
     z-index: 24;
-    background: rgba(0, 0, 0, 0.748);;
+    background: transparent;
+}
+
+.fillChat {
+    background-color: transparent;
+    width: 50%;
+    height: 400px;
 }
 
 #chatZone {
     width: 100%;
     height: fit-content;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
     gap : 10px;
@@ -238,6 +248,14 @@
     bottom: 150px;
 
     z-index: 25;
+}
+
+#chatZoneVert {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap : 10px;
 }
 
 #chatBox {
@@ -283,7 +301,11 @@
 }
 @media (max-width: 1120px) {
     #chatZone {
-        bottom: 200px;
+        bottom: 100px;
+    }
+
+    #chat-backdrop {
+        background: rgba(0, 0, 0, 0.748);
     }
 }
 
