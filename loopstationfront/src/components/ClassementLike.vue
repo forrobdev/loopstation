@@ -203,7 +203,7 @@
 }
 
 .likedDate {
-    color: #CACACA;
+    color: grey;
     font-size: 12px;
 }
 

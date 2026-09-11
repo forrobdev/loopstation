@@ -174,7 +174,6 @@ function resetLogo() {
     
 
     <canvas ref="canvasRef" id="visualizer-canvas" width="800" height="600" style="background: black;"></canvas>
-  
 
     <ActionButtons @play-music="playMusic" @pause-music="pauseMusic"/>
 

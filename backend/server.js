@@ -246,7 +246,8 @@ wss.on('connection', (ws) => {
     }))
 
     // Envoyer l'historique du chat au nouveau client
-    historical.forEach((msg) => {
+    const lastTwoMessages = historical.slice(-2);
+    lastTwoMessages.forEach((msg) => {
         ws.send(msg);
     });
 
