@@ -263,7 +263,7 @@
     align-items: baseline;
     gap: 6px;
 }
-@media (max-width: 750px) {
+@media (max-width: 1120px) {
     #chatZone {
         bottom: 200px;
     }
