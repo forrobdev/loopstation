@@ -19,6 +19,8 @@ function getRandomInt(max) {
 const app = express()
 const PORT = process.env.PORT || 3000;
 
+app.use(cors())
+
 let playlist = []
 let currentTrackIndex = getRandomInt(21)
 let ffmpegProcess = null
@@ -208,7 +210,7 @@ app.get('/stream', (req, res) => {
 });
 
 
-app.use(cors())
+
 
 app.use(express.static(path.join(import.meta.dirname, 'public')))
 
