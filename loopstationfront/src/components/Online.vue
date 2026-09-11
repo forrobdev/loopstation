@@ -20,10 +20,8 @@ const onlineCard = ref(null)
 
 ws.addEventListener("message", (event) => {
     const message = JSON.parse(event.data);
-    console.log("On a reçu un message !" + message)
 
     if (message.type === 'listeners') {
-        console.log("Auditeurs en direct :", message.count);
         onlineNumber.value = message.count;
     }
 });
@@ -63,8 +61,6 @@ let clickCount = 0
 function animateCard() {
 
     clickCount++
-
-    console.log("ClickCount :" + clickCount)
 
     if (clickCount === 10) {
         playVoice(easterEgg1)
@@ -132,10 +128,10 @@ function animateCard() {
     font-weight: 600;
     font-size: 22px;
 
-    -webkit-user-select: none; /* Safari */
-  -moz-user-select: none;    /* Firefox */
-  -ms-user-select: none;     /* Internet Explorer/Edge */
-  user-select: none;   
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;   
 }
 
 .green {

@@ -57,8 +57,6 @@ export const likeManager = defineStore('likeManager', () => {
 
   const isCurrentMusicLiked = computed(() => {
     const currentMusic = playerStore.currentMusic
-    console.log("likesArray :", likesArray.value)
-    console.log("currentMusic :", currentMusic)
     return likesArray.value.some(music => 
       music.name === currentMusic.name && 
       music.author === currentMusic.author
