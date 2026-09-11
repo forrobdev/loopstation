@@ -307,12 +307,12 @@ wss.on('connection', (ws) => {
         // Sauvegarder le message classique dans l'historique
         historique.push(texte);
 
-        const estUnGif = data && data.type === 'gif';
-        const contientLienInterdit = texte.includes("<") || texte.includes(">") || texte.includes("http") || texte.includes(".com");
+        const isGif = data && data.type === 'gif';
+        const forbiddenLink = texte.includes("<") || texte.includes(">") || texte.includes("http") || texte.includes(".com");
 
         wss.clients.forEach((client) => {
             if (client.readyState === WebSocket.OPEN) {
-                if (contientLienInterdit && !estUnGif) {
+                if (forbiddenLink && !isGif) {
                     client.send(JSON.stringify({
                         id : 0,
                         nickname : "Bot",
