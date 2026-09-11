@@ -220,7 +220,7 @@ const server = app.listen(PORT, () => {
 // On attache un unique WebSocket à notre serveur web (infos radio + chat)
 wss = new WebSocketServer({ server })
 
-const historique = [];
+const historical = [];
 
 
 wss.on('connection', (ws) => {
@@ -242,17 +242,17 @@ wss.on('connection', (ws) => {
     }))
 
     // Envoyer l'historique du chat au nouveau client
-    historique.forEach((msg) => {
+    historical.forEach((msg) => {
         ws.send(msg);
     });
 
     ws.on('message', async (message) => { // Ajout de 'async' ici
-        const texte = message.toString();
-        console.log(`message reçu: ${texte}`);
+        const text = message.toString();
+        console.log(`message reçu: ${text}`);
 
         let data;
         try {
-            data = JSON.parse(texte);
+            data = JSON.parse(text);
         } catch (e) {
             return; // Sécurité si on reçoit un message qui n'est pas du JSON
         }
@@ -305,10 +305,10 @@ wss.on('connection', (ws) => {
         // --- 2. GESTION DES MESSAGES TEXTES CLASSIQUES ---
 
         // Sauvegarder le message classique dans l'historique
-        historique.push(texte);
+        historical.push(text);
 
         const isGif = data && data.type === 'gif';
-        const forbiddenLink = texte.includes("<") || texte.includes(">") || texte.includes("http") || texte.includes(".com");
+        const forbiddenLink = text.includes("<") || text.includes(">") || text.includes("http") || text.includes(".com");
 
         wss.clients.forEach((client) => {
             if (client.readyState === WebSocket.OPEN) {
@@ -320,7 +320,7 @@ wss.on('connection', (ws) => {
                         timestamp : Date.now()
                     }));
                 } else {
-                    client.send(texte);
+                    client.send(text);
                 }
             }
         });
