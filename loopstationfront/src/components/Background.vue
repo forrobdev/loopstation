@@ -6,6 +6,7 @@ import ActionButtons from './ActionButtons.vue';
 import welcomeSource from "../assets/welcome.mp3"
 import { gsap } from "gsap"
 import logoSource from "../assets/logo.png"
+import Popup from './Popup.vue';
 
 
 
@@ -165,8 +166,6 @@ function resetLogo() {
 </script>
 
 <template>
-
-
     <div @mousemove="moveLogo" @mouseleave="resetLogo" v-if="!visualizerInit" id="logoParent" >
         <img  :src="logoSource" alt="Loop Station Logo" id="logo" ref="logoRef">
     </div>
@@ -178,6 +177,8 @@ function resetLogo() {
 
 
     <audio ref="audioRef" id="radio-audio" controls crossorigin="anonymous"></audio>
+
+     <Popup/>
 </template>
 
 <style>
