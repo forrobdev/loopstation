@@ -250,4 +250,10 @@
     }
 }
 
+@media (max-height: 550px) {
+    #likesZone {
+        display: none;
+    }
+}
+
 </style>
